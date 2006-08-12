@@ -1,0 +1,221 @@
+#!/usr/bin/python
+
+"""\
+ Early (and probably no longer working) attempt to convert Jaguar output
+ to a Quest input file.
+
+Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
+reserved. See the LICENSE file for licensing details.
+"""
+
+import sys,re,string,sys
+
+symgeo = re.compile('Symmetrized geometry')
+inpgeo = re.compile('Input goemetry')
+newgeo = re.compile('new geometry')
+
+# Need to rewrite this to use standard functions from Element, Jaguar,
+# SeqQuest, etc.
+
+mass = [
+    0.00,
+    1.0008, 4.0026,
+    6.941,9.0122,
+    10.811,12.011,14.007,15.999,18,998,20.179,
+    22.990,24.305,
+    26.982,28.086,30.974,32.066,35.453,39.948,
+    39.098, 40.078,
+    44.9559, 47.867, 50.9415, 51.9961, 54.938, 55.845,
+    58.9332, 58.6934, 63.546,65.39,
+    69.723, 72.61, 74.9216, 78.96, 79.904, 83.80,
+    85.4678, 87.62,
+    88.90686, 91.224, 92.90638, 95.94, 98, 101.07,
+    102.90550, 106.42, 107.8682, 112.411,
+    114.818, 118.710, 121.760, 127.60, 126.90447, 131.29]
+
+sym2no = {
+    'X' : 0, 'H'  : 1, 'He' : 2,
+
+    'Li' : 3, 'Be' : 4, 'B'  : 5, 'C'  : 6, 'N'  : 7,
+    'O'  : 8, 'F'  : 9, 'Ne' : 10,
+    
+    'Na' : 11, 'Mg' : 12, 'Al' : 13, 'Si' : 14,
+    'P'  : 15, 'S'  : 16, 'Cl' : 17, 'Ar' : 18,
+
+    'K' : 19, 'Ca' : 20, 'Sc':21, 'Ti':22, 'V':23,'Cr':24,'Mn':25,
+    'Fe' : 26, 'Co':27, 'Ni':28, 'Cu':29,'Zn':30,
+    'Ga' : 31,'Ge':32,'As':33,'Se':34,'Br':35,'Kr':36,
+
+    'Rb':37, 'Sr':38,'Y':39,'Zr':40,'Nb':41,'Mo':42,'Tc':43,
+    'Ru' : 44,'Rh':45,'Pd':46,'Ag':47,'Cd':48,'In':49,
+    'Sn':50,'Sb':51,'Te':52,'I':53,'Xe':54,
+
+    'Cs':55,'Ba':56,'La':57,'Ce':58,'Pr':59,'Nd':60,'Pm':61,'Sm':62,
+    'Eu':63,'Gd':64,'Tb':65,'Dy':66,'Ho':67,'Er':68,'Tm':69,'Yb':70,
+    'Lu':71,'Hf':72,'Ta':73,'W':74,'Re':75,'Os':76,'Ir':77,'Pt':78,
+    'Au':79,'Hg':80,'Tl':81,'Pb':82,'Bi':83,'At':85,'Rn':86,
+    'U' : 92,
+
+    'x' : 0, 'h'  : 1, 'he' : 2,
+
+    'li' : 3, 'be' : 4, 'b'  : 5, 'c'  : 6, 'n'  : 7,
+    'o'  : 8, 'f'  : 9, 'ne' : 10,
+    
+    'na' : 11, 'mg' : 12, 'al' : 13, 'si' : 14,
+    'p'  : 15, 's'  : 16, 'cl' : 17, 'ar' : 18,
+
+    'k' : 19, 'ca' : 20, 'sc':21, 'ti':22, 'v':23,'cr':24,'mn':25,
+    'fe' : 26, 'co':27, 'ni':28, 'cu':29,'zn':30,
+    'ga' : 31,'ge':32,'as':33,'se':34,'br':35,'kr':36,
+
+    'rb':37, 'sr':38,'y':39,'zr':40,'nb':41,'mo':42,'tc':43,
+    'ru' : 44,'rh':45,'pd':46,'ag':47,'cd':48,'in':49,
+    'sn':50,'sb':51,'te':52,'i':53,'xe':54,
+
+    'cs':55,'ba':56,'la':57,'ce':58,'pr':59,'nd':60,'pm':61,'sm':62,
+    'eu':63,'gd':64,'tb':65,'dy':66,'ho':67,'er':68,'tm':69,'yb':70,
+    'lu':71,'hf':72,'ta':73,'w':74,'re':75,'os':76,'ir':77,'pt':78,
+    'au':79,'hg':80,'tl':81,'pb':82,'bi':83,'at':85,'rn':86,
+    'u' : 92,
+} 
+
+def cleansym(sym):
+    '''strips off everything after and including
+    the first non-letter) in an element name.'''
+    import re
+    pat = re.compile('[^a-zA-Z]')
+    newsym = pat.split(sym)[0]
+    return newsym
+
+def getgeo(file):
+    file.readline()
+    file.readline()
+
+    geo = []
+    while 1:
+        line = file.readline()
+        if not line: break
+
+        words = string.split(line)
+        if len(words) < 4: break
+        
+        sym = words[0]
+        x = float(words[1])
+        y = float(words[2])
+        z = float(words[3])
+        atsym = cleansym(sym)
+        geo.append((atsym,x,y,z))
+
+    return geo
+
+def getLastGeo(filename):
+    file = open(filename,'r')
+
+    geos = []
+    while 1:
+        line = file.readline()
+        if not line: break
+
+        if symgeo.search(line) or inpgeo.search(line) or newgeo.search(line):
+            geo = getgeo(file)
+            geos.append(geo)
+    file.close()
+    return geos[-1]
+
+def convert2Bohr(geo):
+    ang2bohr = 1./0.52918
+    newgeo = []
+    for sym,x,y,z in geo:
+        newgeo.append((sym,x*ang2bohr,y*ang2bohr,z*ang2bohr))
+    return newgeo
+
+def translate2COM(geo):
+    xcom = ycom = zcom = totmass = 0
+    for (sym,x,y,z) in geo:
+        atno = sym2no[sym]
+        atmass = mass[atno]
+        xcom = xcom + atmass*x
+        ycom = ycom + atmass*y
+        zcom = zcom + atmass*z
+        totmass = totmass + atmass
+    xcom = xcom/totmass
+    ycom = ycom/totmass
+    zcom = zcom/totmass
+
+    newgeo = []
+    for (sym,x,y,z) in geo:
+        newgeo.append((sym,x-xcom,y-ycom,z-zcom))
+    return newgeo
+
+def jagout2xyz(filename):
+    geo = getLastGeo(filename)
+    geo = convert2Bohr(geo)
+    geo = translate2COM(geo)
+    newfilename = string.replace(filename,'.out','.tape5')
+    writeSeqTape5(geo,newfilename)
+    return
+
+def getAtomTypes(geo):
+    atomtypes = []
+    for (sym,x,y,z) in geo:
+        if sym in atomtypes:
+            pass
+        else:
+            atomtypes.append(sym)
+    return atomtypes
+
+def writeSeqTape5(geo,filename):
+    file = open(filename,'w')
+    file.write("do setup\n")
+    file.write("do iters\n")
+    file.write("no force\n")
+    file.write("no relax\n")
+    file.write("input data\n")
+    file.write("title\n")
+    file.write("Generated by jagout2sq.py\n")
+    file.write("lattice dimensionality (2=slab, 3=bulk)\n")
+    file.write(" 0\n")
+    file.write("primitive lattice vectors\n")
+    file.write(" 25.0  0.0  0.0\n")
+    file.write("  0.0 25.0  0.0\n")
+    file.write("  0.0  0.0 25.0\n")
+    file.write("points along box sides\n")
+    file.write("64 64 64\n")
+
+    atomtypes = getAtomTypes(geo)
+    file.write("atom types\n")
+    file.write(" %d\n" % len(atomtypes))
+    for atomtype in atomtypes:
+        file.write("atom file\n")
+        file.write("%s.atm\n" % atomtype)
+
+    file.write("number of atoms in unit cell\n")
+    file.write(" %d\n" % len(geo))
+    file.write("atom, type, position vector\n")
+
+    for i in range(len(geo)):
+        sym,x,y,z = geo[i]
+        file.write("%d %d %12.6f %12.6f %12.6f\n" %
+                   (i+1,atomtypes.index(sym)+1,x,y,z))
+    file.write("end setup phase data\n")
+    file.write("run phase input data\n")
+    file.write("first iteration number\n")
+    file.write(" 0\n")
+    file.write("last iteration number\n")
+    file.write("20\n")
+    file.write("percent blend\n")
+    file.write("0.30\n")
+    file.write("convergence criterion\n")
+    file.write("0.00001000\n")
+    file.write("geometry optimization parameters:\n")
+    file.write("gconv\n")
+    file.write("0.0004\n")
+    file.write("end of run phase data\n")
+    file.close()
+    return
+        
+
+if __name__ == '__main__':
+    for filename in sys.argv[1:]:
+        jagout2xyz(filename)
+    
