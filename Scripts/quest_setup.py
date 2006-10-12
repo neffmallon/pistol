@@ -39,10 +39,9 @@ def main(fname=None):
     if not fname: fname = sys.argv[1]
     if fname != 'lcao.in' :
         print "Copyring input file from %s to lcao.in" % fname
-        shutil.copyfile(fname,'lcao.in')
-    if not os.path.exists('lcao.x'):
-        print "Copying quest executable from %s to lcao.x" % quest_exe
-        shutil.copyfile(quest_exe,'lcao.x')
+        shutil.copy(fname,'lcao.in')
+    print "Copying quest executable from %s to lcao.x" % quest_exe
+    shutil.copy(quest_exe,'lcao.x')
 
     # Get atom files
     functional = get_functional(fname)
@@ -56,9 +55,9 @@ def main(fname=None):
         print "Searching for %s in %s" % (atom_file,atom_search_dir)
         if os.path.exists(target):
             print "     found!"
-            shutil.copyfile(target,atom_file)
+            shutil.copy(target,atom_file)
         else:
             print "     not found; please copy by hand"
     return
     
-if __name__ == '__main__': main(quest_home+"/seqquest/WaterCells/pos_16_rho0p75.in")
+if __name__ == '__main__': main()
