@@ -34,30 +34,31 @@ def get_atom_files(fname):
             atom_files.append(file.readline().strip())
     return atom_files
 
-def main(fname=None,test=True):
+def main(fname=None):
     # Copy input file and executable
     if not fname: fname = sys.argv[1]
-    if not test:
-        if fname != 'lcao.in' :
-            shutil.copyfile(fname,'lcao.in')
-        if not os.path.exists('lcao.x'):
-            shutil.copyfile(quest_exe,'lcao.x')
+    if fname != 'lcao.in' :
+        print "Copyring input file from %s to lcao.in" % fname
+        shutil.copyfile(fname,'lcao.in')
+    if not os.path.exists('lcao.x'):
+        print "Copying quest executable from %s to lcao.x" % quest_exe
+        shutil.copyfile(quest_exe,'lcao.x')
 
     # Get atom files
     functional = get_functional(fname)
     atom_files = get_atom_files(fname)
-    print functional,atom_files
     if functional == 'pbe':
         atom_search_dir = quest_pbe_dir
     else:
         atom_search_dir = quest_lda_dir
     for atom_file in atom_files:
         target = os.path.join(atom_search_dir,atom_file)
+        print "Searching for %s in %s" % (atom_file,atom_search_dir)
         if os.path.exists(target):
+            print "     found!"
             shutil.copyfile(target,atom_file)
         else:
-            print "Can't find %s in %s; please copy by hand" % \
-                  (atom_file,atom_search_dir)
+            print "     not found; please copy by hand"
     return
     
 if __name__ == '__main__': main(quest_home+"/seqquest/WaterCells/pos_16_rho0p75.in")
