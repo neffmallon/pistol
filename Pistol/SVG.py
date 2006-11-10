@@ -11,7 +11,8 @@ does a remarkable job of converting SVG files into other formats.
 """
 
 import os
-display_prog = 'display' # Command to execute to display images.
+#display_prog = 'display' # Command to execute to display images.
+display_prog = 'open' # Command to execute to display images.
       
 class Scene:
     def __init__(self,name="svg",height=400,width=400):
