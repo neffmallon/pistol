@@ -2,55 +2,74 @@
 """
 Solve 1-D potentials via the method of Harris, Engerholm, and Gwinn.
 See JCP 43, 1515 (1965).
+
+Status: works for eigenvalues for Harmonic and morse potentials.
+Does not work for wave functions.
 """
 
-from math import sqrt,pi,exp
+from math import sqrt,pi,exp,sin
 
-use_numpy = True
-if use_numpy:
-    from numpy import zeros,arange,matrixmultiply,transpose,diag,array2string
-    from numpy.linalg import eigh
-else:
-    from Numeric import zeros,arange,matrixmultiply,transpose,array2string
-    from LinearAlgebra import Heigenvectors as eigh
-
-
-def diag(v):
-    n = len(v)
-    A = zeros((n,n),'d')
-    for i in range(n): A[i,i] = v[i]
-    return A
+from numpy import zeros,arange,transpose,diag,array2string
+from numpy import dot as matmul
+from numpy.linalg import eigh
+from pylab import plot,clf,axis,show
 
 def HEG(n,V):
     X = zeros((n,n),'d')
     for i in range(n):
-        if i:
+        if i > 0:
             X[i,i-1] = X[i-1,i] = sqrt(i)/sqrt(2)
     # Eq 1 from HEG
     lam,T = eigh(X)
 
-    Vx = [V(li) for li in lam]
+    # Form the potential matrix
     # Eq 2 from HEG
-    #Vho = zeros((n,n),'d')
-    #Vho = matrixmultiply(T,matrixmultiply(diag(Vx),transpose(T)))
-    Vho = simxt(diag(Vx),T)
-    Tho = zeros((n,n),'d')
+    Vx = [V(li) for li in lam]
+    Vho = matmul(T,matmul(diag(Vx),transpose(T)))
+
+    KEho = zeros((n,n),'d')
     for i in range(n):
-        Tho[i,i] = 0.25*(2*i+1)
+        KEho[i,i] = 0.25*(2*i+1)
         if i > 1:
-            Tho[i,i-2] = Tho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
-    Hho = Tho+Vho
-    matprint(Tho,label="T")
-    matprint(Vho,label="V")
-    matprint(Hho,label="H")
-    
+            KEho[i,i-2] = KEho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
+    Hho = KEho+Vho
     E,U = eigh(Hho)
+
     # The eigenvectors are in terms of the HO eigenvectors, so
     # we have to multiply by X before returning
-    return lam,E,matrixmultiply(T,U)
+    return lam,E,matmul(transpose(T),U)
 
-def simx(A,T): return matrixmultiply(transpose(T),matrixmultiply(A,T))
-def simxt(A,T): return matrixmultiply(T,matrixmultiply(A,transpose(T)))
+def HEG2(n,V):
+    """\
+    Does the diagonalization in the discrete variable representation
+    """
+    X = zeros((n,n),'d')
+    for i in range(n):
+        if i > 0:
+            X[i,i-1] = X[i-1,i] = sqrt(i)/sqrt(2)
+    # Eq 1 from HEG
+    lam,T = eigh(X)
+
+    KEho = zeros((n,n),'d')
+    for i in range(n):
+        KEho[i,i] = 0.25*(2*i+1)
+        if i > 1:
+            KEho[i,i-2] = KEho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
+
+    KEx = matmul(transpose(T),matmul(KEho,T))
+
+    # Form the potential matrix
+    # Eq 2 from HEG
+    Vx = diag([V(li) for li in lam])
+
+    Hx = KEx + Vx
+    print "x\n",lam[:5]
+    matprint(KEx,label="T")
+    matprint(Vx,label="V")
+    matprint(Hx,label="H")
+    
+    E,U = eigh(Hx)
+    return lam,E,U
 
 def Tfd(n,dx):
     "Form a finite-difference kinetic energy operator"
@@ -62,17 +81,52 @@ def Tfd(n,dx):
             H[i,i-1] = H[i-1,i] = -0.5*a
     return H
 
-def Hfd(x,V):
-    n = len(x)
-    dx = x[1]-x[0]
-    H = Tfd(n,dx)  # Form the KE operator
+def Hfd(n,xmin,xmax,V):
+    delta = 1e-8
+    dx = (xmax-xmin)/float(n-1.)
+    x = arange(xmin,xmax+delta,dx)
 
-    # Add in the potential
-    for i in range(n):
-        H[i,i] += V(x[i])
-
+    T = Tfd(n,dx)  # Form the KE operator
+    Vfd = diag([V(xi) for xi in x])
+    H = T+Vfd
+    
     E,U = eigh(H)
-    return E,U
+    print "x\n",x[:5]
+    matprint(T,label="T")
+    matprint(Vfd,label="V")
+    matprint(H,label="H")
+    return x,E,U
+
+def tcheby(npts,xmin,xmax):
+    delta = xmax-xmin
+    pts = [xmin+i*delta/(npts+1.) for i in range(1,npts+1)]
+    KEfbr = [(i*pi/delta)**2 for i in range(1,npts+1)]
+    w = [delta/(npts+1.) for i in range(1,npts+1)]
+    T = zeros((npts,npts),'d')
+    for i in range(1,npts+1):
+        for j in range(1,npts+1):
+            T[i-1,j-1] = sqrt(2/(npts+1.))*sin(i*j*pi/(npts+1.))
+    return pts, T,KEfbr, delta
+
+def dv2fb(DVR,T): return matmul(T,matmul(DVR,transpose(T)))
+def fb2dv(FBR,T): return matmul(transpose(T),matmul(FBR,T))
+
+def Hdvr(npts,xmin,xmax,V):
+    m = 1.
+    h = 1.
+    pts,T,KEfbr,w = tcheby(npts,xmin,xmax)
+    Vdvr = [V(xi) for xi in pts]
+    plot(pts,Vdvr)
+    KEfbr = diag(KEfbr)*(h*h/2/m)
+    KEdvr = fb2dv(KEfbr,T)
+    Vdvr = diag(Vdvr)
+    Hdvr =  KEdvr+Vdvr
+    print "x\n",pts[:5]
+    matprint(KEdvr,label="T")
+    matprint(Vdvr,label="V")
+    matprint(Hdvr,label="H")
+    E,U = eigh(Hdvr)
+    return pts,E,U
 
 # Factory functions to build different potentials:
 def square_well_factory(**kwargs):
@@ -92,7 +146,7 @@ def morse_factory(**kwargs):
     X0 = kwargs.get('X0',0)
     D = kwargs.get('D',1.)
     alpha = kwargs.get('alpha',1.)
-    def V(x): return D*pow(1-exp(-alpha*(x-X0)),2)
+    def V(x): return D*pow(1-exp(-alpha*(x-X0)),2)-D
     return V        
 
 # General plotting function
@@ -103,16 +157,14 @@ def plot_results(x,V,U,**kwargs):
     ymin = kwargs.get('ymin',-0.5)
     ymax = kwargs.get('ymax',3)
     norb = kwargs.get('norb',2)
+    doshow = kwargs.get('doshow',False)
 
     if clear: clf()
     plot(x,[V(xi) for xi in x])
     for i in range(norb):
-        if use_numpy:
-            plot(x,U[:,i])
-        else:
-            plot(x,U[i,:])
+        plot(x,U[:,i])
     axis(ymin=ymin,ymax=ymax)
-    show()
+    if doshow: show()
     return
 
 def matprint(A,**kwargs):
@@ -127,24 +179,24 @@ def matprint(A,**kwargs):
     return
 
 def main():
-    delta = 1e-8
     n = 100
-    xmax = 1.1
-    xmin = -xmax
-    dx = (xmax-xmin)/float(n-1.)
-    x = arange(xmin,xmax+delta,dx)
-    Vbox = square_well_factory(V0=100.)
-    Vho = harmosc_factory(k=1)
-    Vmorse = morse_factory(D=1.,alpha=1.)
-    V = Vho
-    E,U = Hfd(x,V)
-    #plot_results(x,V,U)
-    print E[:min(5,n)]/E[0]
-    print E[0],E[0]*8/pi/pi, " The latter should be 1"
-    x,E,U = HEG(n,V)
-    plot_results(x,V,U,clear=False)
-    print E[:min(5,n)]/E[0]
-    print E[0],E[0]*8/pi/pi, " The latter should be 1"
+    xmax = 32.0
+    xmin = -3.0
+    #V = square_well_factory(V0=100.)
+    #V = harmosc_factory(k=1)
+    V = morse_factory(D=3.,alpha=0.5)
+    print "DVR"
+    x,E,U = Hdvr(n,xmin,xmax,V)
+    plot_results(x,V,U,norb=1,ymin=-3)
+    print E[:min(5,n)]
+    print "FD"
+    x,E,U = Hfd(n,xmin,xmax,V)
+    plot_results(x,V,U,norb=1,ymin=-3)
+    print E[:min(5,n)]
+    print "HEG/DVR"
+    x,E,U = HEG2(n,V)
+    plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
+    print E[:min(5,n)]
 
 
 if __name__ == '__main__': main()
