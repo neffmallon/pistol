@@ -6,9 +6,13 @@ See JCP 43, 1515 (1965).
 
 from math import sqrt,pi,exp
 
-from numpy import zeros,arange,transpose,diag,array2string
-from numpy import dot as matrixmultiply
-from numpy.linalg import eigh
+use_numpy = True
+if use_numpy:
+    from numpy import zeros,arange,matrixmultiply,transpose,diag,array2string
+    from numpy.linalg import eigh
+else:
+    from Numeric import zeros,arange,matrixmultiply,transpose,array2string
+    from LinearAlgebra import Heigenvectors as eigh
 
 
 def diag(v):
@@ -17,8 +21,7 @@ def diag(v):
     for i in range(n): A[i,i] = v[i]
     return A
 
-def HEG(x,V):
-    n = len(x)
+def HEG(n,V):
     X = zeros((n,n),'d')
     for i in range(n):
         if i:
@@ -26,11 +29,11 @@ def HEG(x,V):
     # Eq 1 from HEG
     lam,T = eigh(X)
 
-    Vx = [V(xi) for xi in x]
+    Vx = [V(li) for li in lam]
     # Eq 2 from HEG
     #Vho = zeros((n,n),'d')
     #Vho = matrixmultiply(T,matrixmultiply(diag(Vx),transpose(T)))
-    Vho = simx(diag(Vx),T)
+    Vho = simxt(diag(Vx),T)
     Tho = zeros((n,n),'d')
     for i in range(n):
         Tho[i,i] = 0.25*(2*i+1)
@@ -44,18 +47,7 @@ def HEG(x,V):
     E,U = eigh(Hho)
     # The eigenvectors are in terms of the HO eigenvectors, so
     # we have to multiply by X before returning
-    return E,U
-    #return E,matrixmultiply(T,U)
-    #return E,matrixmultiply(transpose(T),U) # closest so far...
-    #return E,matrixmultiply(T,transpose(U))
-    #return E,matrixmultiply(transpose(T),transpose(U))
-    #return E,matrixmultiply(U,T)
-    #return E,matrixmultiply(U,transpose(T))
-    #return E,matrixmultiply(transpose(U),T)
-    #return E,matrixmultiply(transpose(U),transpose(T))
-    #return E,simx(U,T)
-    #return E,transpose(matrixmultiply(transpose(T),matrixmultiply(U,T)))
-    #return E,matrixmultiply(T,matrixmultiply(U,transpose(T)))
+    return lam,E,matrixmultiply(T,U)
 
 def simx(A,T): return matrixmultiply(transpose(T),matrixmultiply(A,T))
 def simxt(A,T): return matrixmultiply(T,matrixmultiply(A,transpose(T)))
@@ -75,14 +67,9 @@ def Hfd(x,V):
     dx = x[1]-x[0]
     H = Tfd(n,dx)  # Form the KE operator
 
-    matprint(H,label="Tfd")
-    
     # Add in the potential
     for i in range(n):
         H[i,i] += V(x[i])
-
-    matprint(H,label="Hfd")
-    
 
     E,U = eigh(H)
     return E,U
@@ -120,7 +107,10 @@ def plot_results(x,V,U,**kwargs):
     if clear: clf()
     plot(x,[V(xi) for xi in x])
     for i in range(norb):
-        plot(x,U[:,i])
+        if use_numpy:
+            plot(x,U[:,i])
+        else:
+            plot(x,U[i,:])
     axis(ymin=ymin,ymax=ymax)
     show()
     return
@@ -138,20 +128,21 @@ def matprint(A,**kwargs):
 
 def main():
     delta = 1e-8
-    n = 50
+    n = 100
     xmax = 1.1
     xmin = -xmax
     dx = (xmax-xmin)/float(n-1.)
     x = arange(xmin,xmax+delta,dx)
-    #Vbox = square_well_factory(V0=100.)
-    V = harmosc_factory(k=1.)
-    #Vmorse = morse_factory(D=1.,alpha=1.)
+    Vbox = square_well_factory(V0=100.)
+    Vho = harmosc_factory(k=1)
+    Vmorse = morse_factory(D=1.,alpha=1.)
+    V = Vho
     E,U = Hfd(x,V)
     #plot_results(x,V,U)
     print E[:min(5,n)]/E[0]
     print E[0],E[0]*8/pi/pi, " The latter should be 1"
-    E,U = HEG(x,V)
-    #plot_results(x,V,U,clear=False)
+    x,E,U = HEG(n,V)
+    plot_results(x,V,U,clear=False)
     print E[:min(5,n)]/E[0]
     print E[0],E[0]*8/pi/pi, " The latter should be 1"
 
