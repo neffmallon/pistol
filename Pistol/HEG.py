@@ -33,6 +33,7 @@ def HEG(n,V):
         if i > 1:
             KEho[i,i-2] = KEho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
     Hho = KEho+Vho
+    Hx = matmul(transpose(T),matmul(Hho,T))
     E,U = eigh(Hho)
 
     # The eigenvectors are in terms of the HO eigenvectors, so
@@ -185,16 +186,20 @@ def main():
     #V = square_well_factory(V0=100.)
     #V = harmosc_factory(k=1)
     V = morse_factory(D=3.,alpha=0.5)
-    print "DVR"
-    x,E,U = Hdvr(n,xmin,xmax,V)
-    plot_results(x,V,U,norb=1,ymin=-3)
-    print E[:min(5,n)]
-    print "FD"
-    x,E,U = Hfd(n,xmin,xmax,V)
-    plot_results(x,V,U,norb=1,ymin=-3)
-    print E[:min(5,n)]
-    print "HEG/DVR"
-    x,E,U = HEG2(n,V)
+    #print "DVR"
+    #x,E,U = Hdvr(n,xmin,xmax,V)
+    #plot_results(x,V,U,norb=1,ymin=-3)
+    #print E[:min(5,n)]
+    #print "FD"
+    #x,E,U = Hfd(n,xmin,xmax,V)
+    #plot_results(x,V,U,norb=1,ymin=-3)
+    #print E[:min(5,n)]
+    #print "HEG/DVR"
+    #x,E,U = HEG2(n,V)
+    #plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
+    #print E[:min(5,n)]
+    print "HEG"
+    x,E,U = HEG(n,V)
     plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
     print E[:min(5,n)]
 
