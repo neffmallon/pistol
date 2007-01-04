@@ -2,16 +2,13 @@
 Use a simple Discrete Variable Representation method to solve
 one-dimensional potentials.
 
-The program here is taken almost verbatim from Eric Bittner's web page at:
-http://k2.chem.uh.edu/quantum/Supplement/QDVR/index.html
-
 A good general introduction to DVR methods is
 Light and Carrington, Adv. Chem. Phys. 114, 263 (2000)
 """
 
 from math import sin,pi,exp,sqrt
 from pylab import plot,show,axis
-from numpy import zeros,transpose,diag
+from numpy import zeros,transpose,diag,array
 from numpy import dot as matmul
 from numpy.linalg import eigh
 
@@ -26,6 +23,10 @@ def tcheby(npts,xmin,xmax):
     npts    The number of points in the quadrature
     xmin    The minimum value of x for the quadrature
     xmax    The maximum value of x for the quadrature
+
+    The program here is taken almost verbatim from Eric Bittner's web
+    page at: http://k2.chem.uh.edu/quantum/Supplement/QDVR/index.html
+
     """
     delta = xmax-xmin
     pts = [xmin+i*delta/(npts+1.) for i in range(1,npts+1)]
