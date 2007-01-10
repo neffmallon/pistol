@@ -7,7 +7,7 @@ reserved. See the LICENSE file for licensing details.
 """
 
 from Pistol.Element import sym2no,symbol,symlower
-from Numeric import array
+from numpy import array
 
 def guess_symbol(msym):
     if msym.lower() in symlower:

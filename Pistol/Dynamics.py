@@ -8,7 +8,7 @@ reserved. See the LICENSE file for licensing details.
 
 import biggles
 from math import sqrt
-from Numeric import array,zeros,Float,dot
+from numpy import array,zeros,Float,dot
 #from SeqQuest import get_energy_forces
 
 VERBOSE = 0

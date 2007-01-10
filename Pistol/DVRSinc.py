@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """SincDVR.py - Radial and Linear kinetic energies matrices via the
-Discrete Variable Representation (DVR) from olbert/Miller J. Chem.
+Discrete Variable Representation (DVR) from Colbert/Miller J. Chem.
 Phys 96, 1982 (1992), Appendix A."""
 
 from pylab import *
@@ -47,7 +47,31 @@ def HarmonicOscillatorFactory(k=1.0):
         return 0.5*k*x*x
     return V
 
-def HarmonicOscillator(**kwargs):
+def SquareWellFactory(Depth=10.,L=5.0):
+    def V(x):
+        if abs(x)<L: return 0
+        return Depth
+    return V
+
+def SquareWellTest():
+    n = 100
+    xmax = 10.0
+    dx = 2*xmax/float(n)
+    X = array([i*dx-xmax for i in range(n)])
+    H = LinearKinetic(n,dx)
+    V = SquareWellFactory()
+    H += diag([V(x) for x in X])
+
+    E,V = eigh(H)
+    print E
+
+    plot(X,V[:,0])
+    plot(X,V[:,1])
+    plot(X,V[:,2])
+    show()
+    return            
+    
+def HarmonicOscillatorTest(**kwargs):
     n = kwargs.get('n',50)
     xmax = kwargs.get('xmax',6.0)
     doplot = kwargs.get('doplot',True)
@@ -67,7 +91,7 @@ def HarmonicOscillator(**kwargs):
         show()
     return            
 
-def Hydrogen():
+def HydrogenTest():
     n = 100
     Rmax = 10.0
     dr = Rmax/float(n)
@@ -83,8 +107,9 @@ def Hydrogen():
     return
 
 def Test():
-    Hydrogen()
-    #HarmonicOscillator()
+    SquareWellTest()
+    #HydrogenTest()
+    #HarmonicOscillatorTest()
 
 if __name__ == '__main__': Test()
 

@@ -8,8 +8,8 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys
-from Numeric import array
-from LinearAlgebra import solve_linear_equations
+from numpy import array
+from numpy.oldnumeric.linalg import solve_linear_equations
 
 DEBUG = 1
 
@@ -22,7 +22,8 @@ def para_fit((x1,y1),(x2,y2),(x3,y3)):
         print x2, y2
         print x3, y3
     b = array([y1,y2,y3])
-    c = solve_linear_equations(a,b)
+    #c = solve_linear_equations(a,b)
+    c = solve(a,b)
     ca,cb,cc = c
     print "Function fit to y = %f x^2 + %f x + %f" % (ca,cb,cc)
     print "Minimum at x = ",-0.5*cb/ca

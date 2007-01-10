@@ -18,8 +18,8 @@ fminNCG     ---      Line-search Newton Conjugate Gradient (uses function, gradi
                      and hessian (if it's provided))
 
 """
-import Numeric
-import MLab
+import numpy as Numeric
+import numpy.oldnumeric.mlab as MLab
 Num = Numeric
 max = MLab.max
 min = MLab.min

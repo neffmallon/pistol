@@ -96,7 +96,7 @@ def numpy_io(lines):
     """Simple routine to take a set of data in text output
        form, and do ones best to convert it into a numpy
        array."""
-    from Numeric import array
+    from numpy import array
     data = []
     for line in lines:
         words = line.split()

@@ -346,7 +346,7 @@ def interp_edge_coordinates(edge,pts,vals,contour_value):
 
 def test_contour_sphere(npts):
     "Test example using POVRay module"
-    from Numeric import arange,array
+    from numpy import arange,array
     from Pistol.POVRay import Scene,TriangleMesh
 
     def sphere(x,y,z): return x*x+y*y+z*z

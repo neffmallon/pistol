@@ -8,7 +8,7 @@ reserved. See the LICENSE file for licensing details.
 
 doTranslate = True # Controls whether to translate to center of lattice
 
-from Numeric import array
+from numpy import array
 from Pistol.BallStickGtkGL import BSWindow
 
 def scale_lattice(lattice,factor): return lattice*factor

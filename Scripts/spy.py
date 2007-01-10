@@ -15,7 +15,7 @@
 Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. See the LICENSE file for licensing details.
 """
-from Numeric import *
+from numpy import zeros
 from Pistol.MatrixViewer import MatrixViewer
 
 def round(x): return int(x+0.5)

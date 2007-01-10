@@ -2,7 +2,7 @@
 "Powell's multidimensional minimization without derivatives"
 # This doesn't work in multidimensions
 
-from Numeric import zeros,array,Float,identity
+from numpy import zeros,array,Float,identity
 from copy import copy
 from math import sqrt
 

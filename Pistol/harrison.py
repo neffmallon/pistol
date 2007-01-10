@@ -27,8 +27,8 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys,getopt,os 
-from Numeric import zeros,Complex        # Make sure that NumPy is in your
-from LinearAlgebra import eigenvalues    #  PYTHONPATH variable
+from numpy import zeros,Complex        # Make sure that NumPy is in your
+from numpy.oldnumeric.linear_algebra import eigenvalues    #  PYTHONPATH variable
 from math import sqrt,pi,cos,sin
 
 # This should be the only variable you have to change:

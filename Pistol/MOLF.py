@@ -74,7 +74,7 @@ def toBohr3(x,y,z):
 def vtk_render_molf(filename):
     from VTK import Scene,vtk_grid_data3
     from Element import color,radius
-    from Numeric import zeros,Float
+    from numpy import zeros,Float
     molf_data = read_molf(filename)
     orbs = molf_data['wfn']
     atoms = molf_data['geometry']

@@ -24,7 +24,7 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys
-from Numeric import zeros,Float
+from numpy import zeros,Float
 from math import sqrt
 
 #Data defined here is global

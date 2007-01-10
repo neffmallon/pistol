@@ -7,7 +7,6 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys
-from Numeric import *
 from Pistol.Socorro import read_crystal,atoms2cart,scale_lattice
 from Pistol.CML import write1
 from Pistol.Constants import bohr2ang

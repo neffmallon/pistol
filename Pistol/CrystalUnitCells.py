@@ -22,7 +22,7 @@ reserved. See the LICENSE file for licensing details.
 #  7/2003      Original version
 #  10/17/2003  Modified atom positions to be in fractional coordinates
 
-import Numeric,math
+import math
 from Element import mass
 
 rt3 = math.sqrt(3)

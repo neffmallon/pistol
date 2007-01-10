@@ -4,7 +4,7 @@
 """
 
 from random import random
-from Numeric import array,Float,zeros
+from numpy import array,Float,zeros
 
 class Universe:
     def __init__(self,atoms=[]):

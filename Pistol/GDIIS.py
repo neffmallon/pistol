@@ -6,8 +6,8 @@
 Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. See the LICENSE file for licensing details.
 """
-from Numeric import dot, ravel,zeros,Float,transpose,sum,array,reshape
-from LinearAlgebra import solve_linear_equations
+from numpy import dot, ravel,zeros,Float,transpose,sum,array,reshape
+from numpy.oldnumeric.linear_algebra import solve_linear_equations
 from math import sqrt
 
 # This is the averager that D.D. Johnson attributes to Anderson.

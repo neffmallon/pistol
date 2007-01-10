@@ -20,7 +20,7 @@ Original comment follows below:
 """
 
 import wx
-import Numeric
+import numpy
 
 #
 # Plotting classes...
@@ -28,7 +28,7 @@ import Numeric
 class PolyPoints:
 
     def __init__(self, points, attr):
-        self.points = Numeric.array(points)
+        self.points = numpy.array(points)
         self.scaled = self.points
         self.attributes = {}
         for name, value in self._attributes.items():
@@ -38,8 +38,8 @@ class PolyPoints:
             self.attributes[name] = value
 
     def boundingBox(self):
-        return Numeric.minimum.reduce(self.points), \
-               Numeric.maximum.reduce(self.points)
+        return numpy.minimum.reduce(self.points), \
+               numpy.maximum.reduce(self.points)
 
     def scaleAndShift(self, scale=1, shift=0):
         self.scaled = scale*self.points+shift
@@ -131,8 +131,8 @@ class PlotGraphics:
         p1, p2 = self.objects[0].boundingBox()
         for o in self.objects[1:]:
             p1o, p2o = o.boundingBox()
-            p1 = Numeric.minimum(p1, p1o)
-            p2 = Numeric.maximum(p2, p2o)
+            p1 = numpy.minimum(p1, p1o)
+            p2 = numpy.maximum(p2, p2o)
         return p1, p2
 
     def scaleAndShift(self, scale=1, shift=0):
@@ -189,10 +189,10 @@ class PlotCanvas(wx.Window):
 
     def _setsize(self):
         (self.width,self.height) = self.GetClientSizeTuple();
-        self.plotbox_size = 0.97*Numeric.array([self.width, -self.height])
+        self.plotbox_size = 0.97*numpy.array([self.width, -self.height])
         xo = 0.5*(self.width-self.plotbox_size[0])
         yo = self.height-0.5*(self.height+self.plotbox_size[1])
-        self.plotbox_origin = Numeric.array([xo, yo])
+        self.plotbox_origin = numpy.array([xo, yo])
 
     def draw(self, graphics, xaxis = None, yaxis = None, dc = None):
         if dc == None: dc = wx.ClientDC(self)
@@ -227,8 +227,8 @@ class PlotCanvas(wx.Window):
             text_height[1] = max(text_height[1], h)
         else:
             yticks = None
-        text1 = Numeric.array([text_width[0], -text_height[1]])
-        text2 = Numeric.array([text_width[1], -text_height[0]])
+        text1 = numpy.array([text_width[0], -text_height[1]])
+        text2 = numpy.array([text_width[1], -text_height[0]])
         scale = (self.plotbox_size-text1-text2) / (p2-p1)
         shift = -p1*scale + self.plotbox_origin + text1
         self._drawAxes(dc, xaxis, yaxis, p1, p2,
@@ -249,8 +249,8 @@ class PlotCanvas(wx.Window):
             range = upper-lower
             if range == 0.:
                 return lower-0.5, upper+0.5
-            log = Numeric.log10(range)
-            power = Numeric.floor(log)
+            log = numpy.log10(range)
+            power = numpy.floor(log)
             fraction = log-power
             if fraction <= 0.05:
                 power = power-1
@@ -275,11 +275,11 @@ class PlotCanvas(wx.Window):
             lower, upper = xaxis
             text = 1
             for y, d in [(bb1[1], -3), (bb2[1], 3)]:
-                p1 = scale*Numeric.array([lower, y])+shift
-                p2 = scale*Numeric.array([upper, y])+shift
+                p1 = scale*numpy.array([lower, y])+shift
+                p2 = scale*numpy.array([upper, y])+shift
                 dc.DrawLine(p1[0],p1[1],p2[0],p2[1])
                 for x, label in xticks:
-                    p = scale*Numeric.array([x, y])+shift
+                    p = scale*numpy.array([x, y])+shift
                     dc.DrawLine(p[0],p[1],p[0],p[1]+d)
                     if text:
                         dc.DrawText(label,p[0],p[1])
@@ -290,11 +290,11 @@ class PlotCanvas(wx.Window):
             text = 1
             h = dc.GetCharHeight()
             for x, d in [(bb1[0], -3), (bb2[0], 3)]:
-                p1 = scale*Numeric.array([x, lower])+shift
-                p2 = scale*Numeric.array([x, upper])+shift
+                p1 = scale*numpy.array([x, lower])+shift
+                p2 = scale*numpy.array([x, upper])+shift
                 dc.DrawLine(p1[0],p1[1],p2[0],p2[1])
                 for y, label in yticks:
-                    p = scale*Numeric.array([x, y])+shift
+                    p = scale*numpy.array([x, y])+shift
                     dc.DrawLine(p[0],p[1],p[0]-d,p[1])
                     if text:
                         dc.DrawText(label,p[0]-dc.GetTextExtent(label)[0],
@@ -303,13 +303,13 @@ class PlotCanvas(wx.Window):
 
     def _ticks(self, lower, upper):
         ideal = (upper-lower)/7.
-        log = Numeric.log10(ideal)
-        power = Numeric.floor(log)
+        log = numpy.log10(ideal)
+        power = numpy.floor(log)
         fraction = log-power
         factor = 1.
         error = fraction
         for f, lf in self._multiples:
-            e = Numeric.fabs(fraction-lf)
+            e = numpy.fabs(fraction-lf)
             if e < error:
                 error = e
                 factor = f
@@ -323,13 +323,13 @@ class PlotCanvas(wx.Window):
             digits = -int(power)
             format = '%'+`digits+2`+'.'+`digits`+'f'
         ticks = []
-        t = -grid*Numeric.floor(-lower/grid)
+        t = -grid*numpy.floor(-lower/grid)
         while t <= upper:
             ticks.append( (t, format % (t,)) )
             t = t + grid
         return ticks
 
-    _multiples = [(2., Numeric.log10(2.)), (5., Numeric.log10(5.))]
+    _multiples = [(2., numpy.log10(2.)), (5., numpy.log10(5.))]
 
     def redraw(self,dc=None):
         if self.last_draw is not None:
@@ -426,19 +426,19 @@ class MenuPlotFrame(wx.Frame):
 
 def test_objects():
     # 100 points sin function, plotted as green circles
-    data1 = 2.*Numeric.pi*Numeric.arange(200)/200.
+    data1 = 2.*numpy.pi*numpy.arange(200)/200.
     data1.shape = (100, 2)
-    data1[:,1] = Numeric.sin(data1[:,0])
+    data1[:,1] = numpy.sin(data1[:,0])
     markers1 = PolyMarker(data1, color='green', marker='circle',size=1)
     
     # 50 points cos function, plotted as red line
-    data1 = 2.*Numeric.pi*Numeric.arange(100)/100.
+    data1 = 2.*numpy.pi*numpy.arange(100)/100.
     data1.shape = (50,2)
-    data1[:,1] = Numeric.cos(data1[:,0])
+    data1[:,1] = numpy.cos(data1[:,0])
     lines = PolyLine(data1, color='red')
     
     # A few more points...
-    pi = Numeric.pi
+    pi = numpy.pi
     markers2 = PolyMarker([(0., 0.), (pi/4., 1.), (pi/2, 0.),
                            (3.*pi/4., -1)], color='blue',
                           fillcolor='green', marker='cross')

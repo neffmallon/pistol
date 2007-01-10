@@ -26,7 +26,7 @@ class mlist(list):
 
 if __name__ == '__main__':
     from random import randrange
-    from Numeric import array,dot
+    from numpy import array,dot
     import time
     l = [randrange(10) for i in range(100000)]
     m = mlist(l)

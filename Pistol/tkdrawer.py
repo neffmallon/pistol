@@ -9,7 +9,7 @@ from Pistol.Element import color,radius
 from Pistol.Util import distance
 from Pistol.XYZ import read
 
-from Numeric import array
+from numpy import array
 from Scientific.TkWidgets.TkVisualizationCanvas import *
 
 def tkdrawer(filename):

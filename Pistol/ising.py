@@ -5,7 +5,7 @@
 
 from math import exp
 from random import randrange,choice,random
-from Numeric import zeros,Int
+from numpy import zeros,Int
 
 def init_ising_lattice(n):
     lattice = zeros((n,n),Int)

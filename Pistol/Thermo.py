@@ -37,8 +37,8 @@ def get_com(atoms):
     
 def get_inertia(atoms):
     "calculate moments of inertia"
-    from Numeric import zeros,Float
-    from LinearAlgebra import Heigenvalues
+    from numpy import zeros,Float
+    from numpy.oldnumeric.linalg import Heigenvalues
     
     xcom,ycom,zcom = get_com(atoms)
 

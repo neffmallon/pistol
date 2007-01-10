@@ -125,7 +125,7 @@ def spy_matrix_pil(A,fname='tmp.png',cutoff=0.1,do_outline=0,
     width      The width of the image (default 300)
 
     Example:
-    >>> from Numeric import identity,Float
+    >>> from numpy import identity,Float
     >>> a = identity(10,Float)
     >>> spy_matrix_pil(a)
     
@@ -168,7 +168,7 @@ def pcolor_matrix_pil(A,fname='tmp.png',do_outline=0,
     width      The width of the image (default 300)
 
     Example:
-    >>> from Numeric import identity,Float
+    >>> from numpy import identity,Float
     >>> a = identity(10,Float)
     >>> pcolor_matrix_pil(a)
     

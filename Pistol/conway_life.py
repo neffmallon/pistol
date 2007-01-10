@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 "Conway's game of life"
 
-from Numeric import zeros,Int0
+from numpy import zeros,Int0
 from random import randrange
 import os
 

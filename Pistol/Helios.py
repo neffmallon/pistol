@@ -45,8 +45,8 @@ Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. 
 """
 
-from Numeric import zeros,Float,sqrt,matrixmultiply,transpose
-from LinearAlgebra import Heigenvectors,Heigenvalues
+from numpy import zeros,Float,sqrt,matrixmultiply,transpose
+from numpy.oldnumeric.linear_algebra import Heigenvectors,Heigenvalues
 import sys,getopt
 
 

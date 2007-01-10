@@ -8,7 +8,7 @@ reserved. See the LICENSE file for licensing details.
 
 import sys,os,glob,string,re
 from shutil import copyfile
-from Numeric import *
+from numpy import *
 
 gamess_exe = "/ul/rpm/prog/gamess98/source/gamess.e"
 scratch_dir = '/temp1/rpm'
@@ -115,7 +115,7 @@ def gamess(jobname):
     return
 
 def get_orbital_from_restart(filename):
-    from Numeric import zeros,Float
+    from numpy import zeros,Float
     file = open(filename,'r')
     start_pattern = re.compile('\$VEC')
     end_pattern = re.compile('\$END') 
@@ -150,7 +150,7 @@ def get_orbital_from_restart(filename):
     return array(orbs)
 
 def get_overlap_from_output(filename):
-    from Numeric import zeros,Float
+    from numpy import zeros,Float
     from Util import matrix_symmetrize
     file = open(filename,'r')
     nbf_pattern = re.compile("TOTAL NUMBER OF BASIS FUNCTIONS")

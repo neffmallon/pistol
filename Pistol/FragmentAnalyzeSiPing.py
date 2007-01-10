@@ -28,7 +28,7 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys
-from Numeric import *
+from numpy import *
 from math import sqrt
 import profile
 import pstats

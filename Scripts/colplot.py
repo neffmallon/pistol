@@ -14,7 +14,7 @@ Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. See the LICENSE file for licensing details.
 """
 
-import re,Numeric,sys,getopt
+import re,sys,getopt
 
 def colplot_gnuplot(fname,xvals,title=None,xlabel=None,ylabel=None):
     import Gnuplot

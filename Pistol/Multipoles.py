@@ -10,7 +10,7 @@ Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. See the LICENSE file for licensing details.
 """
 
-from Numeric import zeros,Float,dot
+from numpy import zeros,Float,dot
 from math import sqrt
 
 # Simple utilities

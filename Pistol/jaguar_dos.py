@@ -3,7 +3,7 @@
 
 import sys,re
 from math import pow,exp,pi,sqrt
-from Numeric import arange
+from numpy import arange
 
 # Exponent for Gaussian delta function. 10 works for approximate systems,
 #  1000 works well for resolving the peaks

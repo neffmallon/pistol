@@ -3,7 +3,7 @@
  Functional optimization using Conjugate Gradient
 """
 
-from Numeric import *
+from numpy import *
 
 def mnbrak(ax,bx,func):
     """\

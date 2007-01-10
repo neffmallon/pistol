@@ -8,7 +8,7 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys,re,os
-from Numeric import *
+from numpy import *
 from Pistol.Util import matrix_symmetrize,cleansym,convert2bohr,translate2com
 from Pistol.Element import sym2no
 
@@ -1088,7 +1088,7 @@ def getgeo(file):
     return geo
 
 def get_grid(file,nx,ny,nz):
-    from Numeric import zeros,Float
+    from numpy import zeros,Float
     grid = zeros((nx,ny,nz),Float)
 
     for i in range(nx):

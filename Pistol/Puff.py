@@ -4,7 +4,7 @@
 """
 
 from math import pi,sin,cos,acos,sqrt
-from Numeric import array,dot,zeros,Float
+from numpy import array,dot,zeros,Float
 from XYZ import read
 #from UFF import Data, DefaultTypes
 #from Dreiding import Data, DefaultTypes

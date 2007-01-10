@@ -14,7 +14,7 @@ reserved. See the LICENSE file for licensing details.
 
 from time import time
 from math import sqrt,pow
-from Numeric import zeros,Float,array,dot
+from numpy import zeros,Float,array,dot
 from Multipoles import distance,l2,full_potential,fit_charge,fit_dipole,\
      fit_quadrupole, fit_octapole, charge_potential, dipole_potential,\
      quadrupole_potential, octapole_potential

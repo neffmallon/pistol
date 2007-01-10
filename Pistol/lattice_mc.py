@@ -2,8 +2,8 @@
 "Playing around with lattice monte carlo"
 
 from random import choice
-from Numeric import Float, array, zeros,log
-from LinearAlgebra import linear_least_squares
+from numpy import Float, array, zeros,log
+from numpy.oldnumeric.linear_algebra import linear_least_squares
 from Gnuplot import Gnuplot, Data
 
 s2d = [(1,0),(0,1),(-1,0),(0,-1)]
