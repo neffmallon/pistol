@@ -1,6 +1,5 @@
 #!/usr/local/bin/python
 
-from Pistol.DVRSinc import LinearKinetic
 from numpy import zeros,diag,pi,transpose
 from numpy import dot as mm
 from numpy.linalg import eigh
