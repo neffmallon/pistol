@@ -151,6 +151,11 @@ def double_well_factory(**kwargs):
     def V(x): return a*x**2 + b*x**4
     return V
 
+def radial_factory(**kwargs):
+    Z = kwargs.get('Z',1.0)
+    def V(r): return -Z/r
+    return V
+
 def plotter(x,V,E,U,**kwargs):
     doshow = kwargs.get('doshow',False)
     nplot = kwargs.get('nplot',5)
@@ -182,7 +187,14 @@ def double_well_test():
     return
 
 def radial_test():
-    def Vrad(r): return -1
+    V = radial_factory(Z=1.0)
+    npts=20
+    pts,T,KEfbr,w = tcheby(npts,0.0,20.0)
+    print pts
+    plot(pts,'ro-')
+    show()
 
-if __name__ == '__main__': double_well_test()
+if __name__ == '__main__':
+    #double_well_test()
+    radial_test()
     

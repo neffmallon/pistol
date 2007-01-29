@@ -53,21 +53,40 @@ def SquareWellFactory(Depth=10.,L=5.0):
         return Depth
     return V
 
+def ExactSquareWell(nstate,npoint,L):
+    """\
+    Return an n-point discretization of the first nstate solutions
+    of the exact particle-in-a-box energies and wave function.
+    """
+    x = array([float(L*j)/float(npoint-1) for j in range(npoint)])
+    E = zeros(nstate,'d')
+    V = zeros((npoint,nstate),'d')
+    norm = sqrt(2./float(L))
+    for n in range(1,nstate+1):
+        E[n-1] = 0.5*n**2*pi**2/L**2
+        V[:,n-1] = norm*sin(n*pi*x/L)
+    return x,E,V
+
 def SquareWellTest():
-    n = 100
-    xmax = 10.0
-    dx = 2*xmax/float(n)
+    n = 128
+    xmax = 0.6
+    dx = 2*xmax/float(n-1)
     X = array([i*dx-xmax for i in range(n)])
     H = LinearKinetic(n,dx)
-    V = SquareWellFactory()
+    V = SquareWellFactory(L=0.5,Depth=1e8)
     H += diag([V(x) for x in X])
 
+    Xx,Ex,Vx = ExactSquareWell(2,100,1.0)
     E,V = eigh(H)
-    print E
 
-    plot(X,V[:,0])
-    plot(X,V[:,1])
-    plot(X,V[:,2])
+    # The wave functions that DVR outputs are different than the exact solution,
+    #  and one needs to multiply by 1/sqrt(dx) to convert the DVR output to
+    #  the exact value.
+    normfact = 1/sqrt(dx)
+    plot(X,normfact*abs(V[:,0]),'bo')
+    plot(Xx-0.5,abs(Vx[:,0]),'b-') # shift the solutions
+    #plot(X,V[:,1])
+    #plot(X,V[:,2])
     show()
     return            
     

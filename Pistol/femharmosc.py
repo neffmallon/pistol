@@ -1,17 +1,20 @@
 
-from numpy import array
+from numpy import array,identity
+from pylab import *
+from Pistol.fempbox import Tfem,Sfem,geigh
 
-from Pistol.fempbox import Tfem,Sfem,gheigh
 
-def femharmosc(n=16,hL=0.5,k=1.0):
+def femharmosc(n=20,hL=0.5,k=1.0):
     # hL stands for half-L, since I want the potential to go between +/- L
     L = 2*hL
+    dx = L/float(n)
     T = Tfem(n,L)
     S = Sfem(n,L)
-    x = array([float(L*j)/float(n)-hL for j in range(1,n)])
-    V = 0.5*k*x**2
-    eval,evec = gheigh(T+V,S)
-    print eval
+    V = identity(n-1,'d')*k*dx**3/30. # yuck!
+    eval,evec = geigh(T+V,S)
+    print eval[:min(10,n)]
+    #plot(evec[:,0])
+    #show()
     return
 
 if __name__ == '__main__': femharmosc()
