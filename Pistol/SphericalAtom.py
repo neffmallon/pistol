@@ -69,6 +69,29 @@ def SphericalAtom(Z,**kwargs):
     # solve for the one-electron solutions
     for nval,lval,f in ePerShell:
         Vl[(nval,lval)] = CoulombFactory(Z,lval)
+
+        # Solve the one-electron system
+
+        # Update the density with this component
+
+    # Start the SCF iterations
+    for iter in range(MaxIter):
+        # Solve the Poisson problem to get the potential
+
+        # Get the XC functional on the radial grid
+
+        # Solve for each component of the wave function and update the density
+        for nval,lval,f in ePerShell:
+            Vl[(nval,lval)] = CoulombFactory(Z,lval)
+
+            # Solve
+
+            # update the density
+
+        # Compute the total energy and test for convergence.
+    return
+
+
         
 
     
