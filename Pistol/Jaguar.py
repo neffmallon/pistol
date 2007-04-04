@@ -58,7 +58,9 @@ class JaguarJob:
     def set_iunit(self,value): self.iunit = int(value)
 
     def add_atom(self,atom):
-        self.atomlist.append(atom)
+        sym,x,y,z = atom
+        x,y,z = map(float,(x,y,z))
+        self.atomlist.append((sym,x,y,z))
         return
 
     def check(self):

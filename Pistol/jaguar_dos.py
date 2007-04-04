@@ -6,13 +6,15 @@ from math import pow,exp,pi,sqrt
 from numpy import arange
 from pylab import *
 
-# Exponent for Gaussian delta function. 10 works for approximate systems,
-#  1000 works well for resolving the peaks
-GEXP = 10.0     
-GSPC = 0.1        # Spacing of Gaussians
 
-def jaguar_dos(fname):
-    do_plot = 1
+def jaguar_dos(fname,**kwargs):
+    do_plot = kwargs.get('do_plot',True)
+
+    # Exponent for Gaussian delta function. 10 works for approximate systems,
+    #  1000 works well for resolving the peaks
+    GEXP = kwargs.get('GEXP',5.)
+    GSPC = kwargs.get('GSPC',0.1)   # Spacing of Gaussians
+    
     evs = get_evs(fname)
     gs = []
     mine = min(evs)
@@ -24,24 +26,18 @@ def jaguar_dos(fname):
         for x in evs:
             d += gaussian(x0,x,GEXP)
         ds.append(d)
+    return xs,ds
 
-    if do_plot:
-        plot(xs,ds,'r-')
-        title('Jaguar density of states')
-        xlabel('Energy (h)')
-        show()
-        #p.write_img(400,400,'jaguar_dos.png')
-    else:
-        for i in range(len(xs)): print xs[i],ds[i]
-    return
-
-
-def gaussian(x0,x,alpha): return sqrt(pi/alpha)*exp(-alpha*pow(x-x0,2))
+def gaussian(x0,x,alpha):
+    arg = alpha*pow(x-x0,2)
+    if arg > 100: return 0
+    return sqrt(pi/alpha)*exp(-arg)
 
 
 def get_evs(fname):
     "Get the orbital energies from Jaguar output"
     orbpat = re.compile('Orbital energies/symmetry label')
+    orbpat_nosym = re.compile('Orbital energies:')
     file = open(fname)
     while 1:
         line = file.readline()
@@ -54,10 +50,26 @@ def get_evs(fname):
                 words = line.split()
                 if not words: break
                 for w in words[0:-1:2]: evs.append(float(w))
+        if orbpat_nosym.search(line):
+            evs = []
+            while 1:
+                line = file.readline()
+                if not line: break
+                words = line.split()
+                if not words: break
+                for w in words: evs.append(float(w))
     return evs
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1: jaguar_dos(sys.argv[1])
+    if len(sys.argv) > 1:
+        for fname in sys.argv[1:]:
+            xs,ds = jaguar_dos(fname)
+            froot = fname.replace('.out','')
+            plot(xs,ds,label=froot)
+        legend(loc='upper left')
+        xlabel("E/h")
+        ylabel("Density of states")
+        show()
 
 
 
