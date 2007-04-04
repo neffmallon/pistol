@@ -3,7 +3,15 @@
 def parseline(line,format):
     """\
     Given a line (a string actually) and a short string telling
-    how to format it, return a list of python objects that result:
+    how to format it, return a list of python objects that result.
+
+    The format string maps words (as split by line.split()) into
+    python code:
+    x   ->    Nothing; skip this word
+    s   ->    Return this word as a string
+    i   ->    Return this word as an int
+    d   ->    Return this word as an int
+    f   ->    Return this word as a float
 
     Basic parsing of strings:
     >>> parseline('Hello, World','ss')

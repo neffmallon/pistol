@@ -101,34 +101,102 @@ def HarmonicOscillatorTest(**kwargs):
     V = HarmonicOscillatorFactory()
     H += diag([V(x) for x in X])
 
+    # The wave functions that DVR outputs are different than the exact solution,
+    #  and one needs to multiply by 1/sqrt(dx) to convert the DVR output to
+    #  the exact value.
+    normfact = 1/sqrt(dx)
+
     E,V = eigh(H)
     print E
     if doplot:
-        plot(X,V[:,0])
-        plot(X,V[:,1])
-        plot(X,V[:,2])
+        plot(X,normfact*V[:,0])
+        plot(X,normfact*V[:,1])
+        plot(X,normfact*V[:,2])
         show()
-    return            
+    return
+
+def fact(n):
+    cache = [1,1,2,6,24,120,720,5040,40320,362880]
+    if n < len(cache): return cache[n]
+    return n*fact(n-1)
+
+def Laguerre(n,k):
+    """\
+    The Associated Laguerre Polynomials, from Arfken p 841
+    """
+    assert k >= 0
+    def L(r):
+        val = 0
+        for m in range(n+1):
+            val += pow(-1,m)*fact(n+k)*pow(r,m)/(fact(n-m)*fact(k+m)*fact(m))
+        return val
+    return L
+
+def ExactH(n,L,Z=1.0):
+    """\
+    Exact Hydrogen-like radial wave functions
+    """
+    n = int(n)
+    L = int(L)
+    Z = float(Z)
+    assert n>L
+    alpha = 2*Z/float(n)
+    prefac = sqrt(pow(alpha,3)*fact(n-L-1)/(2*n*fact(n+L)))
+    Lnl = Laguerre(n-L-1,2*L+1)
+    def F(r):
+        ar = alpha*r
+        return prefac*exp(-0.5*ar)*pow(ar,L)*Lnl(ar)
+    return F
+
+def sign(x): return int(x/abs(x))
 
 def HydrogenTest():
+    Z = 1.0
+    L = 0
+    n = 50
+    Rmax = 20.0
+    dr = Rmax/float(n)
+    R = [float(i+1)*dr for i in range(n)]
+    V = CoulombFactory()
+    H = RadialKinetic(n,dr) + diag([V(r) for r in R]) 
+    eval,evec = eigh(H)
+    #print eval
+    # The wave functions that DVR outputs are different than the exact solution,
+    #  and one needs to multiply by 1/sqrt(r**2*dr) to convert the DVR output to
+    #  the exact value.
+    F1 = ExactH(1,L,Z)
+    F1dvr = [abs(evec[i,0])/sqrt(r*r*dr) for i,r in enumerate(R)]
+    plot(R,F1dvr,'bo',label='1s DVR')
+    plot(R,[F1(r) for r in R],'b-',label='1s exact')
+
+    F2 = ExactH(2,L,Z)
+    F2dvr = array([evec[i,1]/sqrt(r*r*dr)  for i,r in enumerate(R)])
+    phase = sign(F2(R[1]))/sign(F2dvr[1])
+    plot(R,phase*F2dvr,'go',label='2s DVR')
+    plot(R,[F2(r) for r in R],'g-',label='2s exact')
+    legend()
+    show()
+    return
+
+def LaguerreTest():
     n = 100
     Rmax = 10.0
     dr = Rmax/float(n)
     R = [float(i+1)*dr for i in range(n)]
-    V = CoulombFactory()
-    H = RadialKinetic(n,dr) + diag([V(r) for r in R])
-    eval,evec = eigh(H)
-    print eval
-    r = array([(i+1)*dr for i in range(n)])
-    plot(r,abs(evec[:,0]))
-    plot(r,evec[:,1])
+    L01 = Laguerre(0,1)
+    plot(R,[L01(r) for r in R])
+    L11 = Laguerre(1,1)
+    plot(R,[L11(r) for r in R])
+    L21 = Laguerre(2,1)
+    plot(R,[L21(r) for r in R])
     show()
     return
 
 def Test():
-    SquareWellTest()
-    #HydrogenTest()
+    #SquareWellTest()
+    HydrogenTest()
     #HarmonicOscillatorTest()
+    #LaguerreTest()
 
 if __name__ == '__main__': Test()
 
