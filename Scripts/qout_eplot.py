@@ -12,7 +12,7 @@ reserved. See the LICENSE file for licensing details.
 
 import sys
 from Pistol.SeqQuest import read_output
-import biggles
+from pylab import plot,title,xlabel,ylabel,show
 
 if len(sys.argv) < 2:
     print __doc__
@@ -20,12 +20,10 @@ if len(sys.argv) < 2:
 
 results = read_output(sys.argv[1])
 energies = results['energies']
-g = biggles.FramedPlot()
-d = biggles.Curve(range(len(energies)),energies,color='blue')
-g.add(d)
-g.title = 'Energies from Quest run'
-g.xlabel = 'Step'
-g.ylabel = 'Energy (Ry)'
-g.show()
+plot(energies,'b-')
+title('Energies from Quest run')
+xlabel('Step')
+ylabel('Energy (Ry)')
+show()
 
 
