@@ -221,3 +221,5 @@ def get_extrema(A):
                 max = A[i,j]
     return min,max
 
+def spy(*args,**kwargs): return spy_matrix_pil(*args,**kwargs)
+def pcolor(*args,**kwargs): return pcolor_matrix_pil(*args,**kwargs)

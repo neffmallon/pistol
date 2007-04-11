@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""SincDVR.py - Radial and Linear kinetic energies matrices via the
+"""Sinc.py - Radial and Linear kinetic energies matrices via the
 Discrete Variable Representation (DVR) from Colbert/Miller J. Chem.
 Phys 96, 1982 (1992), Appendix A."""
 
@@ -160,7 +160,7 @@ def HydrogenTest():
     V = CoulombFactory()
     H = RadialKinetic(n,dr) + diag([V(r) for r in R]) 
     eval,evec = eigh(H)
-    #print eval
+    print eval
     # The wave functions that DVR outputs are different than the exact solution,
     #  and one needs to multiply by 1/sqrt(r**2*dr) to convert the DVR output to
     #  the exact value.

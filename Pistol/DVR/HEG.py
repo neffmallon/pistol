@@ -4,7 +4,7 @@ Solve 1-D potentials via the method of Harris, Engerholm, and Gwinn.
 See JCP 43, 1515 (1965).
 
 Status: works for eigenvalues for Harmonic and morse potentials.
-Does not work for wave functions.
+Does not work for wave functions. Doing something wrong with the transforms.
 """
 
 from math import sqrt,pi,exp,sin
@@ -21,6 +21,7 @@ def HEG(n,V):
             X[i,i-1] = X[i-1,i] = sqrt(i)/sqrt(2)
     # Eq 1 from HEG
     lam,T = eigh(X)
+    print lam
 
     # Form the potential matrix
     # Eq 2 from HEG
@@ -57,7 +58,8 @@ def HEG2(n,V):
         if i > 1:
             KEho[i,i-2] = KEho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
 
-    KEx = matmul(transpose(T),matmul(KEho,T))
+    #KEx = matmul(transpose(T),matmul(KEho,T))
+    KEx = matmul(T,matmul(KEho,transpose(T)))
 
     # Form the potential matrix
     # Eq 2 from HEG
@@ -150,24 +152,6 @@ def morse_factory(**kwargs):
     def V(x): return D*pow(1-exp(-alpha*(x-X0)),2)-D
     return V        
 
-# General plotting function
-def plot_results(x,V,U,**kwargs):
-    from pylab import plot,clf,axis,show
-
-    clear = kwargs.get('clear',True)
-    ymin = kwargs.get('ymin',-0.5)
-    ymax = kwargs.get('ymax',3)
-    norb = kwargs.get('norb',2)
-    doshow = kwargs.get('doshow',False)
-
-    if clear: clf()
-    plot(x,[V(xi) for xi in x])
-    for i in range(norb):
-        plot(x,U[:,i])
-    axis(ymin=ymin,ymax=ymax)
-    if doshow: show()
-    return
-
 def matprint(A,**kwargs):
     imin = kwargs.get('imin',0)
     imax = kwargs.get('imax',4)
@@ -181,11 +165,9 @@ def matprint(A,**kwargs):
 
 def main():
     n = 100
-    xmax = 32.0
-    xmin = -3.0
     #V = square_well_factory(V0=100.)
-    #V = harmosc_factory(k=1)
-    V = morse_factory(D=3.,alpha=0.5)
+    V = harmosc_factory(k=1)
+    #V = morse_factory(D=3.,alpha=0.5)
     #print "DVR"
     #x,E,U = Hdvr(n,xmin,xmax,V)
     #plot_results(x,V,U,norb=1,ymin=-3)
@@ -199,9 +181,10 @@ def main():
     #plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
     #print E[:min(5,n)]
     print "HEG"
-    x,E,U = HEG(n,V)
-    plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
-    print E[:min(5,n)]
+    x,E,U = HEG2(n,V)
+    plot(x,U[:,0])
+    show()
+    print E[:5]
 
 
 if __name__ == '__main__': main()
