@@ -13,6 +13,7 @@ setup(name="Pistol",
       url=None,
       license="GPL",
       packages=['Pistol'],
+      packages=['Pistol/DVR'],
       scripts=scriptlist)
 
       
