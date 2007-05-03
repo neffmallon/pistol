@@ -58,8 +58,8 @@ def HEG2(n,V):
         if i > 1:
             KEho[i,i-2] = KEho[i-2,i] = -0.25*sqrt(i-1)*sqrt(i)
 
-    #KEx = matmul(transpose(T),matmul(KEho,T))
-    KEx = matmul(T,matmul(KEho,transpose(T)))
+    KEx = matmul(transpose(T),matmul(KEho,T))
+    #KEx = matmul(T,matmul(KEho,transpose(T)))
 
     # Form the potential matrix
     # Eq 2 from HEG
@@ -67,6 +67,9 @@ def HEG2(n,V):
 
     Hx = KEx + Vx
     print "x\n",lam[:5]
+    #from scipy.special.orthogonal import h_roots
+    #print h_roots(n)
+    
     matprint(KEx,label="T")
     matprint(Vx,label="V")
     matprint(Hx,label="H")
@@ -131,27 +134,6 @@ def Hdvr(npts,xmin,xmax,V):
     E,U = eigh(Hdvr)
     return pts,E,U
 
-# Factory functions to build different potentials:
-def square_well_factory(**kwargs):
-    V0 = kwargs.get('V0',1.)
-    A = kwargs.get('A',1.)
-    def V(x):
-        if abs(x) < A: return 0
-        return V0
-    return V
-
-def harmosc_factory(**kwargs):
-    k = kwargs.get('k',1.)
-    def V(x): return 0.5*k*x*x
-    return V
-
-def morse_factory(**kwargs):
-    X0 = kwargs.get('X0',0)
-    D = kwargs.get('D',1.)
-    alpha = kwargs.get('alpha',1.)
-    def V(x): return D*pow(1-exp(-alpha*(x-X0)),2)-D
-    return V        
-
 def matprint(A,**kwargs):
     imin = kwargs.get('imin',0)
     imax = kwargs.get('imax',4)
@@ -164,24 +146,12 @@ def matprint(A,**kwargs):
     return
 
 def main():
-    n = 100
-    #V = square_well_factory(V0=100.)
-    V = harmosc_factory(k=1)
-    #V = morse_factory(D=3.,alpha=0.5)
-    #print "DVR"
-    #x,E,U = Hdvr(n,xmin,xmax,V)
-    #plot_results(x,V,U,norb=1,ymin=-3)
-    #print E[:min(5,n)]
-    #print "FD"
-    #x,E,U = Hfd(n,xmin,xmax,V)
-    #plot_results(x,V,U,norb=1,ymin=-3)
-    #print E[:min(5,n)]
-    #print "HEG/DVR"
-    #x,E,U = HEG2(n,V)
-    #plot_results(x,V,U,ymin=-3,clear=False,doshow=True,norb=1)
-    #print E[:min(5,n)]
-    print "HEG"
-    x,E,U = HEG2(n,V)
+    from PotentialFactories import SquareWellFactory
+    from Exact import ExactSquareWell
+    npts = 30
+    V = SquareWellFactory(L=5.0,Depth=1e8)
+
+    x,E,U = HEG2(npts,V)
     plot(x,U[:,0])
     show()
     print E[:5]
