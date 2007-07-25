@@ -22,8 +22,6 @@ import os
 
 povray_incl = '/usr/local/share/povray-3.6/include'
 povray_prog = '/usr/local/bin/povray'   
-#povray_incl = '/sw/share/povray-3.5/include'
-#povray_prog = '/sw/bin/povray'   
 display_prog = 'open' 
       
 class Scene:

@@ -12,8 +12,7 @@ setup(name="Pistol",
       author_email="rpm@wag.caltech.edu",
       url=None,
       license="GPL",
-      packages=['Pistol'],
-      packages=['Pistol/DVR'],
+      packages=['Pistol','Pistol/DVR'],
       scripts=scriptlist)
 
       

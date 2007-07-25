@@ -19,7 +19,7 @@ basis_list = ['6-31g**','6-311g**','6-311g**++','sto-3g','cc-pvtz',
               'lacvp', 'lacvd', 'lav3d','lav3p']
 
 symgeo = re.compile('Symmetrized geometry')
-inpgeo = re.compile('Input geometry')
+inpgeo = re.compile('Input geometry:')
 newgeo = re.compile('new geometry')
 basisset = re.compile('basis set:')
 charge = re.compile('net molecular charge:')
