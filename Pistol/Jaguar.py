@@ -29,6 +29,8 @@ scftype = re.compile('SCF type:')
 energy = re.compile('SCFE:')
 freqpat = re.compile('^  frequencies ')
 etot_pat = re.compile('^etot ')
+zpe_pat = re.compile("The zero point energy")
+rotsym_pat = re.compile("rotational symmetry n")
 
 class JaguarJob:
     def __init__(self,name='jagjob'):
@@ -934,14 +936,11 @@ def read_output_as_dict(filename):
         line = file.readline()
         if not line: break
 
-        if symgeo.search(line) or inpgeo.search(line):
+        if symgeo.search(line) or inpgeo.search(line) or newgeo.search(line):
             geo = getgeo(file)
-            record['structure'] = geo
-        elif newgeo.search(line):
-            geo = getgeo(file)
-            if record.has_key('structure'):
-                record['input structure'] = record['structure']
-            record['structure'] = geo
+            geos = record.get('geos',[])
+            geos.append(geo)
+            record['geos'] = geos
         elif basisset.search(line):
             record['basis'] = line.split()[2:]
         elif charge.search(line):
@@ -957,7 +956,16 @@ def read_output_as_dict(filename):
         elif freqpat.search(line):
             frs = map(float,line.split()[1:])
             freqs += frs
+        elif zpe_pat.search(line):
+            zpe = float(line.split()[5])
+            record['zpe'] = zpe
+        elif rotsym_pat.search(line):
+            rotsym = int(line.split()[3])
+            record['rotsym'] = rotsym
     if record.has_key('energy'): record['energy units'] = 'hartrees'
+    if record.has_key('geos'):
+        record['structure'] = geos[-1]
+        record['initial structure'] = geos[0]
     if freqs:
         record['freqs'] = freqs
         record['freq_units'] = 'cm^-1'

@@ -46,13 +46,14 @@ def main(n=10,**kwargs):
         xi = X[i]
         ax = abs(xi)
         V[i,i] = 1
-        if xi > dx:
-            V[i,i] = 
-        if abs(xi) > tol:
-            V[i,i] += 4*
-        V[i,i] = -2*ax/dx \
-                 + pow((dx-ax)/dx,2)*(loga(xi)-loga(xi-dx)) \
-                 + pow((dx+ax)/dx,2)*(loga(xi+dx)-loga(xi))
+        # Commented out since it wouldn't compile:
+#         if xi > dx:
+#             V[i,i] = 
+#         if abs(xi) > tol:
+#             V[i,i] += 4*
+#         V[i,i] = -2*ax/dx \
+#                  + pow((dx-ax)/dx,2)*(loga(xi)-loga(xi-dx)) \
+#                  + pow((dx+ax)/dx,2)*(loga(xi+dx)-loga(xi))
         #if i < n-2:
         #    V[i,i+1] = V[i+1,i] = (2*ax+dx)/(2*dx) + ax*(dx+ax)/(dx*dx) *\
         #               (loga(xi+dx)-loga(xi))
