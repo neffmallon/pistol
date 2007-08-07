@@ -412,7 +412,7 @@ def jaguar_kinetics_uni(Aout,Asout,**kwargs):
     dE = 627.51*(As_energy-A_energy)
     dZPE = As_zpe-A_zpe
     print "Inherent barrier (kcal/mol) = ",dE,dZPE
-    print "T(K)  k(cm^3/s)"
+    print "T(K)  k(/s)"
     for T in range(300,2001,100):
         k = rate_uni(A,A_freqs,A_rotsym,A_mult,
                      As,As_pfreqs,As_rotsym,As_mult,T)
