@@ -221,12 +221,12 @@ def inertia(atoms):
     #print "Rotational constants (cm-1) ",16.85763042/moments
     return moments
 
-def rate(A_atoms,A_vibes,A_rotsym,A_emult,
+def rate_bi(A_atoms,A_vibes,A_rotsym,A_emult,
          B_atoms,B_vibes,B_rotsym,B_emult,
          AB_atoms,AB_vibes,AB_rotsym,AB_emult,
          T=300):
     """\
-    k = rate()
+    k = rate_bi()
     Compute the rate of the A+B = AB* -> Prod reaction
 
     Input atoms, vibrational frequencies, rotational symmetry numbers
@@ -243,7 +243,7 @@ def rate(A_atoms,A_vibes,A_rotsym,A_emult,
     >>> vhbr = [2650]
     >>> hhbr = [(1,(0,0,0)),(1,(1.50,0,0)),(35,(2.92,0,0))]
     >>> vhhbr = [460.,460.,2340.]
-    >>> rate(h,vh,1,2,hbr,vhbr,1,1,hhbr,vhhbr,1,2,300)
+    >>> rate_bi(h,vh,1,2,hbr,vhbr,1,1,hhbr,vhhbr,1,2,300)
     2.53252370816e+13
     """
     qtot_A = qtot(A_atoms,A_vibes,T,A_rotsym,A_emult)
@@ -251,6 +251,22 @@ def rate(A_atoms,A_vibes,A_rotsym,A_emult,
     qtot_AB = qtot(AB_atoms,AB_vibes,T,AB_rotsym,AB_emult)
     qratio = qtot_AB/(qtot_A*qtot_B)
     return 62.5e11*NA*qratio*1e6
+
+def rate_uni(A_atoms,A_vibes,A_rotsym,A_emult,
+             As_atoms,As_vibes,As_rotsym,As_emult,
+             T=300):
+    """\
+    k = rate_uni()
+    Compute the rate of the A = A* -> Prod reaction
+
+    Input atoms, vibrational frequencies, rotational symmetry numbers
+    and electronic degeneracy (multiplicity) for each state A, A*
+
+    """
+    qtot_A = qtot(A_atoms,A_vibes,T,A_rotsym,A_emult)
+    qtot_As = qtot(As_atoms,As_vibes,T,As_rotsym,As_emult)
+    qratio = qtot_As/qtot_A
+    return 62.5e11*qratio
 
 def test_therate():
     oh = [(8,(0.0000,0.0000,0.1077)),(1,(0.0000,0.0000,-0.8618))]
@@ -315,7 +331,7 @@ def test_therate():
     print "vibe  ",qv,log(qv)
     print "tot   ",qt,log(qt)
 
-    print "Rate: %10.4e" % rate(oh,voh,1,2,c2h6,vc2h6,1,1,
+    print "Rate: %10.4e" % rate_bi(oh,voh,1,2,c2h6,vc2h6,1,1,
                                 c2h6oh,vc2h6oh,1,2,300)
 
 def jagout_scanner(fname):
@@ -350,15 +366,16 @@ def jagout_scanner(fname):
     #print "energy = ",energy
     return geo,freqs,rotsym,emult,energy,zpe
 
-def posfreqs(freqs,dotest=True):
+def posfreqs(freqs,dotest=True,**kwargs):
     """\
-    Returns the positive frequencies only. Optionally also tests whether there is exactly one
-    negative frequency.
+    Returns the positive frequencies only. Optionally also tests
+    whether there is exactly one negative frequency.
     """
+    freq_cutoff = kwargs.get('freq_cutoff',0)
     if dotest:
-        nf = [freq for freq in freqs if freq < 0]
+        nf = [freq for freq in freqs if freq < freq_cutoff]
         assert len(nf) == 1
-    return [freq for freq in freqs if freq > 0]
+    return [freq for freq in freqs if freq > freq_cutoff]
 
 def fileroot(fname):
     import os.path
@@ -366,24 +383,41 @@ def fileroot(fname):
     root,ext = os.path.splitext(tail)
     return root
 
-def jaguar_kinetics(Aout,Bout,ABout):
+def jaguar_kinetics_bi(Aout,Bout,ABout,**kwargs):
     A,A_freqs,A_rotsym,A_mult,A_energy,A_zpe = jagout_scanner(Aout)
     Aname = fileroot(Aout)
     B,B_freqs,B_rotsym,B_mult,B_energy,B_zpe = jagout_scanner(Bout)
     Bname = fileroot(Bout)
     AB,AB_freqs,AB_rotsym,AB_mult,AB_energy,AB_zpe = jagout_scanner(ABout)
     ABname = fileroot(ABout)
-    AB_pfreqs = posfreqs(AB_freqs)
+    AB_pfreqs = posfreqs(AB_freqs,**kwargs)
     print "Rate for %s + %s = %s" % (Aname,Bname,ABname)
     dE = 627.51*(AB_energy-A_energy-B_energy)
     dZPE = AB_zpe-A_zpe-B_zpe
     print "Inherent barrier (kcal/mol) = ",dE,dZPE
     print "T(K)  k(cm^3/mol-s)"
-    for T in range(300,2000,200):
-        k = rate(A,A_freqs,A_rotsym,A_mult,
+    for T in range(300,2001,100):
+        k = rate_bi(A,A_freqs,A_rotsym,A_mult,
                  B,B_freqs,B_rotsym,B_mult,
                  AB,AB_pfreqs,AB_rotsym,AB_mult,T)
         print "%5d %10.4e" % (T,k)
+
+def jaguar_kinetics_uni(Aout,Asout,**kwargs):
+    A,A_freqs,A_rotsym,A_mult,A_energy,A_zpe = jagout_scanner(Aout)
+    Aname = fileroot(Aout)
+    As,As_freqs,As_rotsym,As_mult,As_energy,As_zpe = jagout_scanner(Asout)
+    Asname = fileroot(Asout)
+    As_pfreqs = posfreqs(As_freqs,**kwargs)
+    print "Rate for %s => %s" % (Aname,Asname)
+    dE = 627.51*(As_energy-A_energy)
+    dZPE = As_zpe-A_zpe
+    print "Inherent barrier (kcal/mol) = ",dE,dZPE
+    print "T(K)  k(cm^3/s)"
+    for T in range(300,2001,100):
+        k = rate_uni(A,A_freqs,A_rotsym,A_mult,
+                     As,As_pfreqs,As_rotsym,As_mult,T)
+        print "%5d %10.4e" % (T,k)
+    return
 
 def test2():
     oh = [(8,(0.0000,0.0000,0.1077)),(1,(0.0000,0.0000,-0.8618))]
@@ -421,9 +455,9 @@ def main():
     doctests() # Always run the doctests
     #test_therate()
     #test_hbr()
-    jaguar_kinetics("/home/rmuller/Desktop/oh.out",
-                    "/home/rmuller/Desktop/h2.out",
-                    "/home/rmuller/Desktop/h2-oh.out")
+    jaguar_kinetics_bi("/home/rmuller/Desktop/oh.out",
+                       "/home/rmuller/Desktop/h2.out",
+                       "/home/rmuller/Desktop/h2-oh.out")
 
 if __name__ == '__main__':
     main()
