@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import math
-from wxPython.wx import *
-from wxPython.glcanvas import *
+import wx,wx.glcanvas
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -10,19 +9,19 @@ from OpenGL.GLU import *
 ID_ABOUT=101
 ID_EXIT=102
 
-class BSCanvas(wxGLCanvas):
+class BSCanvas(wx.glcanvas.GLCanvas):
     def __init__(self, parent, spheres=[], cyls=[], lines=[]):
-        wxGLCanvas.__init__(self, parent, -1)
+        wx.glcanvas.GLCanvas.__init__(self, parent, -1)
         self.init = False
         # initial mouse position
         self.lastx = self.x = 30
         self.lasty = self.y = 30
-        EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
-        EVT_SIZE(self, self.OnSize)
-        EVT_PAINT(self, self.OnPaint)
-        EVT_LEFT_DOWN(self, self.OnMouseDown)  # needs fixing...
-        EVT_LEFT_UP(self, self.OnMouseUp)
-        EVT_MOTION(self, self.OnMouseMotion)
+        wx.EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
+        wx.EVT_SIZE(self, self.OnSize)
+        wx.EVT_PAINT(self, self.OnPaint)
+        wx.EVT_LEFT_DOWN(self, self.OnMouseDown)  # needs fixing...
+        wx.EVT_LEFT_UP(self, self.OnMouseUp)
+        wx.EVT_MOTION(self, self.OnMouseMotion)
 
         self.transx = 0
         self.transy = 0
@@ -42,7 +41,7 @@ class BSCanvas(wxGLCanvas):
             glViewport(0, 0, size.width, size.height)
 
     def OnPaint(self, event):
-        dc = wxPaintDC(self)
+        dc = wx.PaintDC(self)
         self.SetCurrent()
         if not self.init:
             self.InitGL()
@@ -70,7 +69,7 @@ class BSCanvas(wxGLCanvas):
         self.roty = self.roty % 360.
         
         self.beginx,self.beginy = x,y
-        
+        return
 
     def InitGL(self):
         # set viewing projection
@@ -133,34 +132,34 @@ class BSCanvas(wxGLCanvas):
                   0.0, 1.0, 0.0)
         return
 
-class BSFrame(wxFrame):
+class BSFrame(wx.Frame):
     def __init__(self,parent,ID,title,spheres,cyls,lines):
-        wxFrame.__init__(self,parent,ID,title,
-                         wxDefaultPosition, wxSize(400,400))
+        wx.Frame.__init__(self,parent,ID,title,
+                         wx.DefaultPosition, wx.Size(400,400))
 
         self.CreateStatusBar()
 
-        self.menuBar = wxMenuBar()
+        self.menuBar = wx.MenuBar()
         self.SetMenuBar(self.menuBar)
 
-        self.filemenu = wxMenu()
+        self.filemenu = wx.Menu()
         self.menuBar.Append(self.filemenu,'&File')
         self.filemenu.Append(ID_EXIT, 'E&xit','Terminate the program')
-        EVT_MENU(self, ID_EXIT, self.TimeToQuit)
+        wx.EVT_MENU(self, ID_EXIT, self.TimeToQuit)
 
-        self.helpmenu = wxMenu()
+        self.helpmenu = wx.Menu()
         self.menuBar.Append(self.helpmenu,'&Help')
         self.helpmenu.Append(ID_ABOUT, '&About',"More info about this program")
-        EVT_MENU(self, ID_ABOUT, self.OnAbout)
+        wx.EVT_MENU(self, ID_ABOUT, self.OnAbout)
 
         self.glcanvas = BSCanvas(self,spheres,cyls,lines)
         return
 
     def OnAbout(self,event):
-        dlg = wxMessageDialog(self,
+        dlg = wx.MessageDialog(self,
                                "Draw balls and sticks using OpenGL",
                                "About BallStickWX",
-                               wxOK|wxICON_INFORMATION)
+                               wx.OK|wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         return
@@ -169,19 +168,19 @@ class BSFrame(wxFrame):
         self.Close(true)
         return
 
-class BSApp(wxApp):
+class BSApp(wx.App):
     def __init__(self,id,spheres=[],cyls=[],lines=[]):
         self.spheres = spheres
         self.cyls = cyls
         self.lines = lines
-        wxApp.__init__(self,id)
+        wx.App.__init__(self,id)
         
     def OnInit(self):
-        frame = BSFrame(NULL,-1,'BallStickWX',
+        frame = BSFrame(None,-1,'BallStickWX',
                         self.spheres,self.cyls,self.lines)
-        frame.Show(true)
+        frame.Show(True)
         self.SetTopWindow(frame)
-        return true
+        return True
 
 def addSphere((x,y,z),rad,(red,green,blue),nslices,nstacks):
     glPushMatrix();
