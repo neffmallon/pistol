@@ -86,3 +86,39 @@ def permute(iterable) :
              else : elt = iterable.__class__((iterable[0],))
              for j, k in enumerate(i) : yield i[0:j] + elt + i[j:]
              yield i + elt
+
+def xcombos(items,n,unique=True):
+    if n == 0: yield []
+    else:
+        for i in xrange(len(items)):
+            if unique:
+                for cc in xcombos(items[i+1:],n-1,unique):
+                    yield [items[i]]+cc
+            else:
+                for cc in xcombos(items[:i]+items[i+1:],n-1,unique):
+                    yield [items[i]]+cc
+    return
+
+def contfrac(f,nterms=10):
+    f,rem = divmod(f,1)
+    frac = [int(f)]
+    for i in range(nterms-1):
+        f,rem = divmod(1/rem,1)
+        frac.append(int(f))
+    return frac
+
+def cf_to_frac(l):
+    # would be nice to have a rational version of this
+    n = len(l)
+    f = l[n-1]
+    for i in range(n-2,-1,-1):
+        f = l[i] + 1/float(f)
+    return f
+
+import math
+cf = contfrac(math.pi)
+print math.pi,cf,cf_to_frac(cf)
+cf = contfrac(math.sqrt(2))
+print math.sqrt(2),cf,cf_to_frac(cf)
+
+        
