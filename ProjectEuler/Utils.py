@@ -87,6 +87,31 @@ def permute(iterable) :
              for j, k in enumerate(i) : yield i[0:j] + elt + i[j:]
              yield i + elt
 
+def farey(v, lim):
+    """
+    Named after James Farey, an English surveyor.
+    No error checking on args -- lim = max denominator,
+    results are (numerator, denominator), (1,0) is infinity
+    """
+    if v < 0:
+        n,d = farey(-v, lim)
+        return -n,d
+    z = lim-lim	# get 0 of right type for denominator
+    lower, upper = (z,z+1), (z+1,z)
+    while 1:
+        mediant = (lower[0] + upper[0]), (lower[1]+upper[1])
+        if v * mediant[1] > mediant[0]:
+            if lim < mediant[1]: return upper
+            lower = mediant
+        elif v * mediant[1] == mediant[0]:
+            if lim >= mediant[1]: return mediant
+            if lower[1] < upper[1]: return lower
+            return upper
+        else:
+            if lim < mediant[1]: return lower
+            upper = mediant
+
+
 def xcombos(items,n,unique=True):
     if n == 0: yield []
     else:
@@ -114,11 +139,3 @@ def cf_to_frac(l):
     for i in range(n-2,-1,-1):
         f = l[i] + 1/float(f)
     return f
-
-import math
-cf = contfrac(math.pi)
-print math.pi,cf,cf_to_frac(cf)
-cf = contfrac(math.sqrt(2))
-print math.sqrt(2),cf,cf_to_frac(cf)
-
-        

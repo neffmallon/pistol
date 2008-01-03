@@ -19,7 +19,12 @@ from sets import Set
 digits = Set('123456789')
 # Remove checking for length to save time
 #def ispandigital(nstr): return len(nstr) == 9 and Set(nstr) == digits
-def ispandigital(nstr): return Set(nstr) == digits
+#def ispandigital(nstr): return Set(nstr) == digits
+strdigs = ['1','2','3','4','5','6','7','8','9']
+def ispandigital(nstr):
+    l = list(nstr)
+    l.sort()
+    return l == strdigs
 
 # Search got up to i=216812 without finding a solution
 
@@ -27,6 +32,7 @@ f = fibonacci()
 nmax = 1000000
 for i in xrange(nmax):
     fi = f.next()
+    if i < 216811: continue
     fstr = str(fi).replace("L","")
     if not ispandigital(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]
