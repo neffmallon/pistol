@@ -1,3 +1,7 @@
+"""
+Utility functions that have been useful in Project Euler
+"""
+
 #def gcd(a,b):
 #    if b==0: return a
 #    return gcd(b, a%b)
@@ -25,6 +29,7 @@ def factorial(n):
         return 1
     return n*factorial(n-1)
 
+def ndigits(n): return len(num_to_digits(n))
 def num_to_digits(n): return map(int,str(n))
 def digits_to_num(d): return int("".join(map(str,d)))
 
@@ -139,3 +144,43 @@ def cf_to_frac(l):
     for i in range(n-2,-1,-1):
         f = l[i] + 1/float(f)
     return f
+
+class Rational:
+    def __init__(self,N,D=1):
+        self.N = N
+        self.D = D
+        self.reduce()
+        return
+
+    def reduce(self):
+        f = gcd(self.N,self.D) 
+        if f != 1:
+            self.N /= f
+            self.D /= f
+        return
+
+    def mult(self,other):
+        return Rational(self.N*other.N,self.D*other.D)
+
+    def add(self,other):
+        return Rational(self.N*other.D + self.D*other.N,self.D*other.D)
+
+    def inverse(self):
+        return Rational(self.D,self.N)
+
+    def __repr__(self):
+        return "%d/%d" % (self.N,self.D)
+
+def cf_to_rf(l):
+    n = len(l)
+    r = Rational(l[n-1])
+    for i in range(n-2,-1,-1):
+        r = Rational(l[i]).add(r.inverse())
+    return r
+
+
+
+
+
+
+    
