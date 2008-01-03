@@ -32,7 +32,7 @@ f = fibonacci()
 nmax = 1000000
 for i in xrange(nmax):
     fi = f.next()
-    if i < 216811: continue
+    if i < 280000: continue
     fstr = str(fi).replace("L","")
     if not ispandigital(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]

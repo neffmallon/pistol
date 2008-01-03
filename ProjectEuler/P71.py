@@ -24,8 +24,8 @@ from Utils import farey,gcd
 results = []
 dmax = 1000000
 threesevenths = 3/7.
-for d in range(1,dmax+1):
-    start = int(math.floor(0.42*d))
+for d in range(999000,1000001):
+    start = int(math.floor(0.4285*d))
     fd = float(d)
     for n in range(start,d):
         f = n/fd
@@ -35,6 +35,9 @@ for d in range(1,dmax+1):
     if d % 100 == 0:
         results.sort()
         results = results[-20:]
+        print "current results at %d" % d
+        print results
+
     
 
 
