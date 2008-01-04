@@ -21,7 +21,7 @@ Given that L is the length of the wire, for how many values of L <=
 1,000,000 can exactly one right angle triangle be formed?
 """
 
-#import psyco; psyco.full()
+import psyco; psyco.full()
 from time import time
 from math import sqrt
 
@@ -49,7 +49,8 @@ def brute(nmax=100):
     from math import sqrt
     results = {}
     for a in range(1,nmax):
-        if a % 1000 == 0: print "Working on %d in brute()" % a
+        if a % 1000 == 0:
+            print "Before step %d in brute()" % a
         a2 = a*a
         for b in range(1,a):
             if a+b > nmax: break
@@ -63,6 +64,7 @@ def brute(nmax=100):
                     results[p].append((b,a,c))
                 else:
                     results[p] = [(b,a,c)]
+
     return results
 
 # I thought this would be faster, but it was actually slower
@@ -94,8 +96,12 @@ def using_sos(nmax = 10000):
                 results[p] = [(a,b,c)]
     return results
 
-results = brute(1000000)
-nunit = 0
-for p in results:
-    if len(results[p]) > 1: nunit += 1
-print nunit
+def nunit(results):
+    n = 0
+    for p in results:
+        if len(results[p]) > 1: n += 1
+    return n
+
+nmax = 100000
+results = brute(nmax)
+print nunit(results)
