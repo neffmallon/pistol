@@ -133,6 +133,7 @@ def contfrac(f,nterms=10):
     f,rem = divmod(f,1)
     frac = [int(f)]
     for i in range(nterms-1):
+        if rem == 0: break
         f,rem = divmod(1/rem,1)
         frac.append(int(f))
     return frac
@@ -179,8 +180,4 @@ def cf_to_rf(l):
     return r
 
 
-
-
-
-
-    
+def isint(f): return f == int(f)
