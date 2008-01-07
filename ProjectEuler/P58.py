@@ -25,6 +25,7 @@ ratio of primes along both diagonals first falls below 10%?
 
 from Utils import spiral_matrix,primes,spiral
 from sets import Set
+from gmpy import is_prime
 
 def percent_diagonals_prime(m):
     n = m.shape[0]
@@ -48,7 +49,7 @@ def generator(nmax=101):
     # The following step is the killer: I can't generate enough primes
     # in memory. The GMPY out of core prime routine would probably
     # work here.
-    ps = Set(primes(nmax*nmax))
+    #ps = Set(primes(nmax*nmax))
     s = spiral()
     ij = 1
     ndiag = 0
@@ -57,7 +58,7 @@ def generator(nmax=101):
         x,y = s.next()
         if x==y or x==-y:
             ndiag += 1
-            if ij in ps: nprime += 1
+            if is_prime(ij): nprime += 1
             pct = nprime/float(ndiag)
             print "%3d %3d %3d %5d %.2f" % (i+1,x,y,ij,round(pct,2))
             if i > 100 and pct < 0.1: break
@@ -66,5 +67,5 @@ def generator(nmax=101):
 
 if __name__ == '__main__':
     #brute(101)
-    generator(8001)
+    generator(12001)
 

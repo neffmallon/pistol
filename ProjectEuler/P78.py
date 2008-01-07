@@ -18,9 +18,6 @@ O   O   O   O   O
 
 import psyco; psyco.full()
 
-from Utils import next_partition,partition_upper_bound,\
-     count_partitions
-
 def get_rama_ests(nmax=1000):
     for j in range(1,nmax):
         e = partition_upper_bound(j)
