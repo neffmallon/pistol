@@ -24,6 +24,7 @@ Given that L is the length of the wire, for how many values of L <=
 import psyco; psyco.full()
 from time import time
 from math import sqrt
+from sets import Set
 
 def isint(n): return int(n) == n
 
@@ -37,12 +38,15 @@ def formula(nmax = 100):
             b = 2*m*n
             c = m2+n2
             p = a+b+c
+            if p > nmax: continue
             l = [a,b,c]
             l.sort()
-            if p in results:
-                results[p].append(l)
-            else:
-                results[p] = [l]
+            a,b,c = l
+            for n in range(1,nmax/p+1):
+                if n*p in results:
+                    results[n*p].add((n*a,n*b,n*c))
+                else:
+                    results[n*p] = Set([(n*a,n*b,n*c)])
     return results
 
 def brute(nmax=100):
@@ -96,13 +100,30 @@ def using_sos(nmax = 10000):
                 results[p] = [(a,b,c)]
     return results
 
+def pdict(results):
+    ps = results.keys()
+    ps.sort()
+    for p in ps:
+        print p,results[p]
+    return
+
 def nunit(results):
     n = 0
     for p in results:
-        if len(results[p]) > 1: n += 1
+        if len(results[p]) == 1: n += 1
     return n
 
 # Notes: look at forum for problem 39 for hints
-nmax = 100000
+nmax = 5000
+t0 = time()
 results = brute(nmax)
-print nunit(results)
+t1 = time()
+#pdict(results)
+#print nunit(results)
+results = formula(nmax)
+t2 = time()
+#pdict(results)
+#print nunit(results)
+print t1-t0,t2-t1
+
+
