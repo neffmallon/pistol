@@ -102,6 +102,7 @@ def nunit(results):
         if len(results[p]) > 1: n += 1
     return n
 
+# Notes: look at forum for problem 39 for hints
 nmax = 100000
 results = brute(nmax)
 print nunit(results)

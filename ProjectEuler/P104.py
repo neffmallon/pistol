@@ -13,31 +13,43 @@ Given that Fk is the first Fibonacci number for which the first nine
 digits AND the last nine digits are 1-9 pandigital, find k.
 """
 
+import psyco; psyco.full()
+
 from Utils import fibonacci
 from sets import Set
+from time import time
 
-digits = Set('123456789')
 # Remove checking for length to save time
-#def ispandigital(nstr): return len(nstr) == 9 and Set(nstr) == digits
-#def ispandigital(nstr): return Set(nstr) == digits
+digits = Set('123456789')
 strdigs = ['1','2','3','4','5','6','7','8','9']
+def ispandigital4(nstr):
+    sstr = Set(nstr)
+    return (len(sstr) == 9) and ("0" not in sstr)
+def ispandigital3(nstr):
+    return len(nstr) == 9 and Set(nstr) == digits
+def ispandigital2(nstr):
+    return Set(nstr) == digits
 def ispandigital(nstr):
     l = list(nstr)
     l.sort()
     return l == strdigs
 
-# Search got up to i=216812 without finding a solution
-
+# Search got up to i=370932 without finding a solution
 f = fibonacci()
-nmax = 1000000
+t0 = time()
+nmax = 10000
 for i in xrange(nmax):
     fi = f.next()
-    if i < 280000: continue
     fstr = str(fi).replace("L","")
-    if not ispandigital(fstr[-9:]): continue
+    if not ispandigital4(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]
     if ispandigital(fstr[9:]):
         print "BOTH: ",i,fstr[:9],fstr[-9:]
         break
-
-
+t1 = time()
+print t1-t0
+# Time to search through 10,000 fibs:
+#ispandigital   7.8 sec, 7.8 with psyco
+#ispandigital2  7.9 sec, 7.8 with psyco
+#ispandigital3  7.9 sec, 7.9 with psyco
+#ispandigital4  7.8 sec, 7.8 with psyco

@@ -14,7 +14,7 @@ least two positive integers?
 
 from math import exp,pi,sqrt
 
-def upper_bound(k):
+def partition_upper_bound(k):
     """Ramanujan's upper bound for number of partitions of k"""
     return int(exp(pi*sqrt(2.0*k/3.0))/(4.0*k*sqrt(3.0)))
 

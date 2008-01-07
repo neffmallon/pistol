@@ -181,3 +181,109 @@ def cf_to_rf(l):
 
 
 def isint(f): return f == int(f)
+
+def next_partition(p):
+    "Taken from the perl monks recipe 621859, which I don't understand"
+    from copy import copy
+    p2 = copy(p)
+
+    # Collect all the trailing 1s
+    x = 0
+    while p2 and p2[-1] == 1:
+        x += p2.pop()
+    if not p2: return []
+
+    # Collect 1 from the rightmost remaining element
+    p2[-1] -= 1
+    x += 1
+
+    while x > p2[-1]:
+        p2.append(p2[-1])
+        x -= p2[-1]
+    p2.append(x)
+    return p2
+
+def partition_upper_bound(k):
+    """Ramanujan's upper bound for number of partitions of k"""
+    from math import sqrt,exp,pi
+    return int(exp(pi*sqrt(2.0*k/3.0))/(4.0*k*sqrt(3.0)))
+
+def count_partitions(i):
+    p = [i]
+    n = 1
+    while 1:
+        p = next_partition(p)
+        if not p: break
+        n += 1
+    return n
+
+def incr_partitions(p1s):
+    """Given the partitions of p(n-1), generate the partitions of p(n).
+    This generates the partitions in the reverse of the order I like,
+    but it isn't that big of a deal.
+    """
+    ps = []
+    for p in p1s:
+        ps.append([1]+p)
+        if p and (len(p) == 1 or p[1] > p[0]):
+            ps.append([p[0]+1]+p[1:])
+    return ps
+
+def spiral():
+    """\
+    >>> list(islice(spiral(),1))
+    [(0, 0)]
+    >>> list(islice(spiral(),2))
+    [(0, 0), (1, 0)]
+    >>> list(islice(spiral(),4))
+    [(0, 0), (1, 0), (1, -1), (0, -1)]
+    >>> list(islice(spiral(),9))
+    [(0, 0), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1)]
+    """
+    #RIGHT, UP, LEFT, DOWN = range(4)
+    UP, RIGHT, DOWN, LEFT = range(4)
+    
+    dx = dy = 0
+    count = 1
+    remain = 2
+    distance = 1
+    direction = RIGHT
+
+    icount = 0
+    while 1:
+        yield dx,dy
+        remain -= 1
+        if remain == 0:  # Need to change direction
+            if direction == UP:
+                distance += 1
+                direction = LEFT
+            elif direction == DOWN:
+                distance += 1
+                direction -= 1
+            else:
+                direction -= 1
+            remain = distance
+        if direction == LEFT:
+            dx -= 1
+        elif direction == RIGHT:
+            dx += 1
+        elif direction == UP:
+            dy -= 1
+        elif direction == DOWN:
+            dy += 1
+    # end
+
+def spiral_matrix(n):
+    "Make a numpy integer matrix from the pts array"
+    from itertools import islice
+    from numpy import zeros
+    p = zeros((n,n),'i')
+    sp = list(islice(spiral(),n*n))
+    hn,rem = divmod(n,2)
+    ipt = 0
+    for y,x in sp:
+        x = -x
+        ipt += 1
+        p[x+hn,y+hn] = ipt
+    return p
+

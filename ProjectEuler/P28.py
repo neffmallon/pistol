@@ -12,7 +12,7 @@ It can be verified that the sum of both diagonals is 101.
 What is the sum of both diagonals in a 1001 by 1001 spiral formed in the same way?
 """
 
-from itertools import islice
+from Utils import spiral_matrix
 
 def primes(n):
     """\
@@ -42,69 +42,13 @@ def primes(n):
         m=2*i+3
     return [2]+[x for x in s if x]
 
-def spiral():
-    """\
-    >>> list(islice(spiral(),1))
-    [(0, 0)]
-    >>> list(islice(spiral(),2))
-    [(0, 0), (1, 0)]
-    >>> list(islice(spiral(),4))
-    [(0, 0), (1, 0), (1, -1), (0, -1)]
-    >>> list(islice(spiral(),9))
-    [(0, 0), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1)]
-    """
-    #RIGHT, UP, LEFT, DOWN = range(4)
-    UP, RIGHT, DOWN, LEFT = range(4)
-    
-    dx = dy = 0
-    count = 1
-    remain = 2
-    distance = 1
-    direction = RIGHT
-
-    icount = 0
-    while 1:
-        yield dx,dy
-        remain -= 1
-        if remain == 0:  # Need to change direction
-            if direction == UP:
-                distance += 1
-                direction = LEFT
-            elif direction == DOWN:
-                distance += 1
-                direction -= 1
-            else:
-                direction -= 1
-            remain = distance
-        if direction == LEFT:
-            dx -= 1
-        elif direction == RIGHT:
-            dx += 1
-        elif direction == UP:
-            dy -= 1
-        elif direction == DOWN:
-            dy += 1
-    # end
-
-def sp_matrix(n,sp_pts):
-    "Make a numpy integer matrix from the pts array"
-    from numpy import zeros
-    p = zeros((n,n),'i')
-    hn,rem = divmod(n,2)
-    ipt = 0
-    for y,x in sp_pts:
-        x = -x
-        ipt += 1
-        p[x+hn,y+hn] = ipt
-    return p
 
 def main(**kwargs):
     """\
     Make a nxn prime spiral.
     """
     n = kwargs.get('n',5)
-    sp = list(islice(spiral(),n*n))
-    p = sp_matrix(n,sp)
+    p = spiral_matrix(n)
     if n < 15: print p
     dsum1 = 0
     dsum2 = 0

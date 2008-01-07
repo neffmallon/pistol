@@ -91,7 +91,7 @@ def makecode(ci,cj,ck):
     l = map(ord,(ci,cj,ck))
     return l*401
 
-def main():
+def solve():
     results = []
     for i in cs:
         for j in cs:
@@ -114,6 +114,8 @@ text = "(The Gospel of John, chapter 1) 1 In the beginning the Word already exis
 
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    print sum(map(ord,text))
+    
 
 
