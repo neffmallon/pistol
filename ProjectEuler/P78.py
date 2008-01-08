@@ -16,13 +16,16 @@ OO   O   O   O
 O   O   O   O   O 
 """
 
-import psyco; psyco.full()
+from Utils import partition_upper_bound,count_partitions
 
-def get_rama_ests(nmax=1000):
-    for j in range(1,nmax):
+def get_rama_ests(nmax=10000):
+    results = []
+    for j in range(50,nmax):
         e = partition_upper_bound(j)
         r,rem = divmod(e,1000000)
-        if rem < 1000: print j
+        if rem < 2000: results.append((rem,j))
+    results.sort()
+    print [j for rem,j in results[:-5]]
     return 
 
 def incr_partitions(p1s):
@@ -45,5 +48,9 @@ def brute():
         if np % 1000000 == 0: break
 
 if __name__ == '__main__':
-    get_rama_ests()
+    #get_rama_ests()
+    # returned: [2394, 5872, 5161, 2256, 6402, 6879, 1844,
+    #            5254, 2062, 4641, 5926, 6774, 3906, 6510]
+    # as good candidates
+    print count_partitions(1844)
     

@@ -25,7 +25,7 @@ ratio of primes along both diagonals first falls below 10%?
 
 from Utils import spiral_matrix,primes,spiral
 from sets import Set
-from gmpy import is_prime
+#from gmpy import is_prime
 
 def percent_diagonals_prime(m):
     n = m.shape[0]
