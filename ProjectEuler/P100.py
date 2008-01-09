@@ -55,16 +55,19 @@ def brute2():
     t =1000000000000L
     b = 1000000000
     m = 1000000
-    for i in xrange(b):
+    for i in xrange(b,2*b):
         nt = t+i
         nb1,nb2 = quadratic(1,-1,-nt*(nt-1)/2)
         inb1 = long(nb1)
-        for nb in range(inb1-3,inb1+3):
+        win = 1
+        for nb in range(inb1-win,inb1+win+1):
             n = 2*nb*(nb-1)
             d = nt*(nt-1)
             if n==d:
                 print nb,nt,n,d
                 break
+        if i % m == 0: print i
+    return
 
 brute2()
 
