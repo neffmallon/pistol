@@ -40,24 +40,28 @@ def quadratic(a,b,c):
     n1 = -b
     disc = b*b-4*a*c
     if disc < 0: return None,None
-    n2 = sqrt(disc)
-    return (n1+n2)/(2.0*a),(n1-n2)/(2.0*a)
+    #n2 = sqrt(disc)
+    n2 = isqrt(disc)
+    return (n1+n2)/(2*a),(n1-n2)/(2*a)
 
 def brute():
     t =1000000000000L
-    for i in xrange(20000):
+    m = 1000000
+    for i in xrange(m):
         nt = t+i
-        nb1,nb2 = quadratic(1,-1,-nt*(nt-1)/2)
+        nb1,nb2 = quadratic(2,-2,-nt*(nt-1))
+        nb = int(nb1)
         if isint(nb1):
-            print nt,nb1
+            print nt,nb,2*nb*(nb-1)==nt*(nt-1)
+    return
 
 def brute2():
     t =1000000000000L
     b = 1000000000
     m = 1000000
-    for i in xrange(b,2*b):
+    for i in xrange(2*b):
         nt = t+i
-        nb1,nb2 = quadratic(1,-1,-nt*(nt-1)/2)
+        nb1,nb2 = quadratic(2,-2,-nt*(nt-1))
         inb1 = long(nb1)
         win = 1
         for nb in range(inb1-win,inb1+win+1):
@@ -69,6 +73,26 @@ def brute2():
         if i % m == 0: print i
     return
 
-brute2()
-
-
+def clever():
+    t =1000000000000L
+    b = 1000000000
+    m = 1000000
+    for i in xrange(2*b):
+        nt = t+i
+        q = 2*nt*nt - 2*nt + 1
+        qrt = long(sqrt(q))
+        sqs = []
+        win = 1
+        #print "Seeking sqrt of ",q
+        #print "Approximate sqrt = ",qrt,qrt*qrt
+        for i in range(-win,win+1):
+            qrti = qrt + i
+            qrti2 = qrti*qrti
+            if q == qrti2:
+                "Solution found: nt = ",nt
+                "sqrt(2nt^2-2nt+1) = ",qrti
+                break
+            elif qrti2 > q:
+                break
+            #print "!= ",qrti2
+clever()
