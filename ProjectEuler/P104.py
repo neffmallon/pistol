@@ -34,7 +34,7 @@ def ispandigital(nstr):
     l.sort()
     return l == strdigs
 
-# Search got up to i=442270 without finding a solution
+# Search got up to i=494672 without finding a solution
 f = fibonacci()
 t0 = time()
 nmax = 10000
