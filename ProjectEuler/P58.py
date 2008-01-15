@@ -46,25 +46,21 @@ def brute(nmax=101):
     print percent_diagonals_prime(m)
     return
 
-def generator(nmax=101):
-    # The following step is the killer: I can't generate enough primes
-    # in memory. The GMPY out of core prime routine would probably
-    # work here.
+def generator():
     s = spiral()
     ij = 1
     ndiag = 0
     nprime = 0
     #for i in xrange(nmax*nmax):
-    i = 0
     while 1:
-        i += 1
         x,y = s.next()
         if x==y or x==-y:
             ndiag += 1
             if isprime(ij): nprime += 1
             pct = nprime/float(ndiag)
-            print "%3d %3d %3d %5d %.2f" % (i+1,x,y,ij,round(pct,3))
-            if i > 100 and pct < 0.1: break
+            print "%8d %8d %10d %14.10f" % (x,y,ij,pct)
+            if ij > 100 and pct < 0.1: break
+            #if ij > 100 and pct < 0.63: break
         ij += 1
     return
 
@@ -79,6 +75,9 @@ def prime_test(nmax):
         
 
 if __name__ == '__main__':
+    # Got a result less than 10% for a square of length 13120, but
+    # the web site says this is wrong.
     #brute(101)
-    generator(100001)
-
+    generator()
+    # My final result was 13120, but this was an x value, so the correct
+    # result was 2*13120+1 = 26241
