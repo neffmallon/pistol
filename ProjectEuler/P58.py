@@ -23,9 +23,10 @@ continued, what is the side length of the square spiral for which the
 ratio of primes along both diagonals first falls below 10%?
 """
 
+import psyco; psyco.full()
 from Utils import spiral_matrix,primes,spiral
+from MillerRabin import isprime
 from sets import Set
-#from gmpy import is_prime
 
 def percent_diagonals_prime(m):
     n = m.shape[0]
@@ -49,23 +50,35 @@ def generator(nmax=101):
     # The following step is the killer: I can't generate enough primes
     # in memory. The GMPY out of core prime routine would probably
     # work here.
-    #ps = Set(primes(nmax*nmax))
     s = spiral()
     ij = 1
     ndiag = 0
     nprime = 0
-    for i in range(nmax*nmax):
+    #for i in xrange(nmax*nmax):
+    i = 0
+    while 1:
+        i += 1
         x,y = s.next()
         if x==y or x==-y:
             ndiag += 1
-            if is_prime(ij): nprime += 1
+            if isprime(ij): nprime += 1
             pct = nprime/float(ndiag)
-            print "%3d %3d %3d %5d %.2f" % (i+1,x,y,ij,round(pct,2))
+            print "%3d %3d %3d %5d %.2f" % (i+1,x,y,ij,round(pct,3))
             if i > 100 and pct < 0.1: break
         ij += 1
     return
 
+def prime_test(nmax):
+    # Make sure that Miller Rabin agrees with Sieve test
+    ps = Set(primes(nmax))
+    def isprime2(n): return n in ps
+    for i in range(nmax):
+        if isprime2(i) != isprime(i): print i, isprime(i),isprime2(i)
+    print "Completed prime test through %d" % nmax
+    return
+        
+
 if __name__ == '__main__':
     #brute(101)
-    generator(12001)
+    generator(100001)
 

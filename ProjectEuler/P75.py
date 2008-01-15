@@ -33,27 +33,30 @@ def formula(nmax = 100):
     for m in range(1,nmax):
         m2 = m*m
         for n in range(1,m):
+            # m2-n2 + 2*m*n + m2+n2 = 2m2+2mn = 2m(m+n)
+            p = 2*m2*(m+n)
+            if p > nmax: continue
             n2 = n*n
             a = m2-n2
             b = 2*m*n
             c = m2+n2
             p = a+b+c
-            if p > nmax: continue
             l = [a,b,c]
             l.sort()
             a,b,c = l
-            for n in range(1,nmax/p+1):
-                if n*p in results:
-                    results[n*p].add((n*a,n*b,n*c))
+            for q in range(1,nmax/p+1):
+                if q*p in results:
+                    results[q*p].add((q*a,q*b,q*c))
                 else:
-                    results[n*p] = Set([(n*a,n*b,n*c)])
+                    results[q*p] = Set([(q*a,q*b,q*c)])
+    print nunit(results)
     return results
 
 def brute(nmax=100):
     from math import sqrt
     results = {}
     for a in range(1,nmax):
-        if a % 1000 == 0:
+        if a % 10000 == 0:
             print "Before step %d in brute()" % a
         a2 = a*a
         for b in range(1,a):
@@ -68,7 +71,8 @@ def brute(nmax=100):
                     results[p].append((b,a,c))
                 else:
                     results[p] = [(b,a,c)]
-
+    print nunit(results)
+    if nmax < 1001: pdict(results)
     return results
 
 # I thought this would be faster, but it was actually slower
@@ -113,17 +117,68 @@ def nunit(results):
         if len(results[p]) == 1: n += 1
     return n
 
-# Notes: look at forum for problem 39 for hints
-nmax = 5000
-t0 = time()
-results = brute(nmax)
-t1 = time()
-#pdict(results)
-#print nunit(results)
-results = formula(nmax)
-t2 = time()
-#pdict(results)
-#print nunit(results)
-print t1-t0,t2-t1
+def time_test(nmax = 5000):
+    t0 = time()
+    results = brute(nmax)
+    t1 = time()
+    #pdict(results)
+    #print nunit(results)
+    results = formula2(nmax)
+    t2 = time()
+    #pdict(results)
+    #print nunit(results)
+    print t1-t0,t2-t1
+    return
+
+def isqrt(i2): return int(sqrt(i2))
+
+def attempt3(nmax=10000):
+    sqs = Set([i*i for i in range(1,nmax)])
+    trs = {}
+    for a2 in sqs:
+        a = isqrt(a2)
+        for b2 in sqs:
+            b = isqrt(b2)
+            if b2 < a2: continue
+            c2 = a2+b2
+            if c2 in sqs:
+                c = isqrt(c2)
+                p = a+b+c
+                if p > nmax: continue
+                if p in trs:
+                    trs[p].append((a,b,c))
+                else:
+                    trs[p] = [(a,b,c)]
+    print "Number of unit perimeters: ",nunit(trs)
+    pdict(trs)
+    return trs
+
+def formula2(nmax=1000):
+    results = {}
+    for m in range(1,nmax):
+        m2 = m*m
+        for n in range(1,m):
+            if 2*m*(m+n) > nmax: break
+            n2 = n*n
+            for l in range(1,nmax):
+                p = 2*l*m*(m+n)
+                if p > nmax: break
+                a = l*(m2-n2)
+                b = 2*l*m*n
+                c = l*(m2+n2)
+                abc = [a,b,c]
+                abc.sort()
+                if p in results:
+                    results[p].add(tuple(abc))
+                else:
+                    results[p] = Set([tuple(abc)])
+    print nunit(results)
+    if nmax < 1001: pdict(results)
+    return results
+
+
+if __name__ == '__main__':
+    formula2(1000000) # 107868: correct
+    
 
 

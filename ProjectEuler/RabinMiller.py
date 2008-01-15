@@ -87,4 +87,4 @@ def debug_test():
         print hex(generate_prime(bits))
         bits = int(bits*1.5)
 
-if __name__ == '__main__':
+if __name__ == '__main__': debug_test()

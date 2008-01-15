@@ -73,6 +73,27 @@ def brute2():
         if i % m == 0: print i
     return
 
+def clever2():
+    from pylab import *
+    thou = 1000
+    mill = 1000000
+    bill = 1000000000
+    trill = 1000000000000L
+    nmax = thou
+    # We want to find the solutions where 2*k^2-1 is a perfect square
+    ks = []
+    for k in range(2,mill):
+        s = sqrt(2*k*k-1)
+        i = long(s)
+        if i == s and i%2==1:
+            nt = (1 + i)/2
+            nb = (1 + sqrt(1+2*nt*(nt-1)))/2
+            print k,nt,nb,2.*nb*(nb-1)/(nt*(nt-1))
+            ks.append(i)
+    plot(ks)
+    show()
+    
+
 def clever():
     t =1000000000000L
     b = 1000000000
