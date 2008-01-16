@@ -13,7 +13,7 @@ Given that Fk is the first Fibonacci number for which the first nine
 digits AND the last nine digits are 1-9 pandigital, find k.
 """
 
-import psyco; psyco.full()
+#import psyco; psyco.full()
 
 from Utils import fibonacci
 from sets import Set
@@ -36,18 +36,18 @@ def ispandigital(nstr):
 
 # Search got up to i=494672 without finding a solution
 f = fibonacci()
-t0 = time()
-nmax = 10000
-for i in xrange(nmax):
+i = -1
+while 1:
+    i += 1
     fi = f.next()
     fstr = str(fi).replace("L","")
+    if "0" in fstr[:9]+fstr[-9:]: continue
     if not ispandigital4(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]
-    if ispandigital(fstr[9:]):
+    if ispandigital(fstr[:9]):
         print "BOTH: ",i,fstr[:9],fstr[-9:]
         break
-t1 = time()
-print t1-t0
+
 # Time to search through 10,000 fibs:
 #ispandigital   7.8 sec, 7.8 with psyco
 #ispandigital2  7.9 sec, 7.8 with psyco

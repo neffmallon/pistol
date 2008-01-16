@@ -72,7 +72,6 @@ def prime_test(nmax):
         if isprime2(i) != isprime(i): print i, isprime(i),isprime2(i)
     print "Completed prime test through %d" % nmax
     return
-        
 
 if __name__ == '__main__':
     # Got a result less than 10% for a square of length 13120, but
@@ -80,4 +79,4 @@ if __name__ == '__main__':
     #brute(101)
     generator()
     # My final result was 13120, but this was an x value, so the correct
-    # result was 2*13120+1 = 26241
+    # result was 2*13120+1 = 26241.

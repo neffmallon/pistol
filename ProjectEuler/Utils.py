@@ -146,6 +146,21 @@ def cf_to_frac(l):
         f = l[i] + 1/float(f)
     return f
 
+def sqrtcf(n):
+    orig = n
+    denom = 1
+    addterm = 0
+    cflist = []
+    while True:
+        m = int(pow(n,0.5)) # <-- replace with function call
+        cflist.append(m)
+        if len(cflist)>1 and denom == 1:
+            break                   
+        addterm = -(addterm - m*denom)
+        denom = (orig - addterm**2)/denom
+        n = ((pow(orig,0.5) + addterm)/denom)**2
+    return cflist
+
 class Rational:
     def __init__(self,N,D=1):
         self.N = N
