@@ -27,12 +27,98 @@ heptagonal, and octagonal, is represented by a different number in the
 set.
 """
 
+from sets import Set
+
 def fourdigit(x): return 999 < x < 9999
-tri4s = filter(fourdigit,[n*(n+1)/2 for n in range(1000)])
-sq4s = filter(fourdigit,[n*n for n in range(1000)])
+tri4s  = filter(fourdigit,[n*(n+1)/2 for n in range(1000)])
+sq4s   = filter(fourdigit,[n*n for n in range(1000)])
 pent4s = filter(fourdigit,[n*(3*n-1)/2 for n in range(1000)])
-hex4s = filter(fourdigit,[n*(2*n-1) for n in range(1000)])
+hex4s  = filter(fourdigit,[n*(2*n-1) for n in range(1000)])
 hept4s = filter(fourdigit,[n*(5*n-3)/2 for n in range(1000)])
-oct4s = filter(fourdigit,[n*(3*n-2) for n in range(1000)])
-print oct4s
+oct4s  = filter(fourdigit,[n*(3*n-2) for n in range(1000)])
+
+names = ['tri4s','sq4s','pent4s','hex4s','hept4s','oct4s']
+series = [tri4s,sq4s,pent4s,hex4s,hept4s,oct4s]
+nseries = len(series)
+
+def find_pairs():
+    pairs = []
+    for i in range(nseries):
+        for i2 in range(len(series[i])):
+            element = series[i][i2]
+            ending = str(element)[-2:]
+            for j in range(nseries):
+                if j == i: continue
+                for j2 in range(len(series[j])):
+                    if str(series[j][j2]).startswith(ending):
+                        pairs.append((i,i2,j,j2))
+
+    print "%d pairs found" % len(pairs)
+    return pairs
+
+def find_triplets(pairs):
+    triplets = []
+    for i,i2,j,j2 in pairs:
+        ending = str(series[j][j2])[-2:]
+        for k in range(nseries):
+            if k == i or k == j: continue
+            for k2 in range(len(series[k])):
+                if str(series[k][k2]).startswith(ending):
+                    triplets.append((i,i2,j,j2,k,k2))
+    print "%d triplets found" % len(triplets)
+    return triplets
+
+def find_quartets(triplets):
+    quartets = []
+    for i,i2,j,j2,k,k2 in triplets:
+        ending = str(series[k][k2])[-2:]
+        for l in range(nseries):
+            if l == i or l == j or l == k: continue
+            for l2 in range(len(series[l])):
+                if str(series[l][l2]).startswith(ending):
+                    quartets.append((i,i2,j,j2,k,k2,l,l2))
+    print "%d quartets found" % len(quartets)
+    return quartets
+
+def find_quintets(quartets):
+    quintets = []
+    for i,i2,j,j2,k,k2,l,l2 in quartets:
+        ending = str(series[l][l2])[-2:]
+        for m in range(nseries):
+            if m == i or m == j or m == k or m == l: continue
+            for m2 in range(len(series[m])):
+                if str(series[m][m2]).startswith(ending):
+                    quintets.append((i,i2,j,j2,k,k2,l,l2,m,m2))
+    print "%d quintets found" % len(quintets)
+    return quintets
+
+def find_sextets(quintets):
+    sextets = []
+    for i,i2,j,j2,k,k2,l,l2,m,m2 in quintets:
+        ending = str(series[m][m2])[-2:]
+        for n in range(nseries):
+            if n == i or n == j or n == k or n == l or n == m: continue
+            for n2 in range(len(series[n])):
+                if str(series[n][n2]).startswith(ending):
+                    sextets.append((i,i2,j,j2,k,k2,l,l2,m,m2,n,n2))
+    print "%d sextets found" % len(sextets)
+    return sextets
+
+def find_sextet_cycles(sextets):
+    for i,i2,j,j2,k,k2,l,l2,m,m2,n,n2 in sextets:
+        ending = str(series[n][n2])[-2:]
+        if str(series[i][i2]).startswith(ending):
+            print sum([series[i][i2],series[j][j2],series[k][k2],
+                       series[l][l2],series[m][m2],series[n][n2]])
+            print series[i][i2],series[j][j2],series[k][k2],series[l][l2],\
+                  series[m][m2],series[n][n2]
+    return
+
+pairs = find_pairs()
+triplets = find_triplets(pairs)
+quartets = find_quartets(triplets)
+quintets = find_quintets(quartets)
+sextets = find_sextets(quintets)
+find_sextet_cycles(sextets)
+# Worked
 

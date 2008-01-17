@@ -3,6 +3,7 @@ import psyco; psyco.full()
 from math import sqrt
 from sets import Set
 from Utils import primes,gcd
+from pylab import *
 
 def avg(a,b): return (a+b)/2.
 def isqrt(n,maxiter=100,f=1):
@@ -61,20 +62,20 @@ def brute2():
     m = 1000000
     for i in xrange(2*b):
         nt = t+i
+        denom = nt*(nt-1)
         nb1,nb2 = quadratic(2,-2,-nt*(nt-1))
         inb1 = long(nb1)
         win = 1
         for nb in range(inb1-win,inb1+win+1):
-            n = 2*nb*(nb-1)
-            d = nt*(nt-1)
-            if n==d:
-                print nb,nt,n,d
+            num = 2*nb*(nb-1)
+            if num==denom:
+                print nb,nt,num,denom
                 break
+            if num > denom: break
         if i % m == 0: print i
     return
 
 def clever2():
-    from pylab import *
     thou = 1000
     mill = 1000000
     bill = 1000000000
@@ -116,4 +117,4 @@ def clever():
             elif qrti2 > q:
                 break
             #print "!= ",qrti2
-clever()
+brute2()
