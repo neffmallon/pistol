@@ -34,17 +34,17 @@ def ispandigital(nstr):
     l.sort()
     return l == strdigs
 
-# Search got up to i=494672 without finding a solution
 f = fibonacci()
 i = -1
 while 1:
     i += 1
     fi = f.next()
-    fstr = str(fi).replace("L","")
+    fstr = str(fi)
+    #if ispandigital4(fstr[:9]): print "FIRST ",i,fstr[:9]
     if "0" in fstr[:9]+fstr[-9:]: continue
     if not ispandigital4(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]
-    if ispandigital(fstr[:9]):
+    if ispandigital4(fstr[:9]):
         print "BOTH: ",i,fstr[:9],fstr[-9:]
         break
 
