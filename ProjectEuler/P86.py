@@ -31,9 +31,11 @@ def shortest(A,B,C):
     yz = D(000,0Bz)+D(0Bz,ABC) = min(0Bm)
     zy = D(000,0yC)+D(0yC,ABC) = min(0yC)
     '''
-    return min(sqrt((A+C)**2 + B**2),
-               sqrt((A+B)**2 + C**2),
-               sqrt((B+C)**2 + A**2))
+    #return min(sqrt((A+C)**2 + B**2),
+    #           sqrt((A+B)**2 + C**2),
+    #           sqrt((B+C)**2 + A**2))
+    # Assuming A>B>C:
+    return sqrt((B+C)**2+A**2)
 
 def test1():
     print shortest(6,5,3) # Should be 10
@@ -49,11 +51,14 @@ def calc_nint(M=100):
     print "For M=%d, # integral solutions = %d" % (M,nint)
     return nint
 
-def test2(M=100):
-    calc_nint(M)
+def test2():
+    calc_nint(99)
+    calc_nint(100)
     return
 
-if __name__ == '__main__': calc_nint(2000)
+if __name__ == '__main__':
+    #test2()
+    calc_nint(2000)
 # For M=99, # integral solutions = 1975
 # For M=100, # integral solutions = 2060
 # For M=200, # integral solutions = 9???
