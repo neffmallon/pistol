@@ -17,6 +17,7 @@ solutions is 1975 when M=99.
 Find the least value of M such that the number of solutions first
 exceeds one million.
 '''
+import psyco; psyco.full()
 
 from Utils import isint
 from math import sqrt
@@ -41,14 +42,18 @@ def test1():
     print shortest(6,5,3) # Should be 10
     return
 
-def calc_nint(M=100):
+def calc_nint():
+    from itertools import count
     nint = 0
-    for A in range(1,M+1):
-        for B in range(1,A+1):
-            for C in range(1,B+1):
+    #for A in range(1,M+1):
+    for A in count(1):
+        for B in xrange(1,A+1):
+            for C in xrange(1,B+1):
                 d = shortest(A,B,C)
                 if isint(d): nint+=1
-    print "For M=%d, # integral solutions = %d" % (M,nint)
+        print A,nint
+        if nint > 1000000: break
+    print "For M=%d, # integral solutions = %d" % (A,nint)
     return nint
 
 def test2():
@@ -58,9 +63,9 @@ def test2():
 
 if __name__ == '__main__':
     #test2()
-    calc_nint(2000)
+    calc_nint()
 # For M=99, # integral solutions = 1975
 # For M=100, # integral solutions = 2060
 # For M=200, # integral solutions = 9???
 # For M=1000, # integral solutions = 281334
-
+# For M = 1818, integral solutions = 1000457
