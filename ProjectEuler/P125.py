@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+from pprint import pprint
 from math import sqrt
+from sets import Set
 
 def is_palindrome_list(l):
     """
@@ -19,16 +21,22 @@ def is_palindrome_list(l):
     return True
 
 def main(nmax=1000):
+    import time
+    t0 = time.time()
     results = []
-    sqs = [i*i for i in range(1,int(sqrt(nmax))+1)]
-    nsq = len(sqs)
-    for l in range(2,nsq):
-        for i in range(0,nsq-l+1):
-            n = sum(sqs[i:(i+l)])
-            if is_palindrome_list(str(n)) and n<nmax:
-                results.append(n)
-    print len(results),sum(results)
+    nsq = int(sqrt(nmax))+1
+    for i in range(1,nsq):
+        s = i*i
+        for l in range(1,nsq-i):
+            s += (i+l)**2
+            if s >= nmax: break
+            if is_palindrome_list(str(s)):
+                results.append(s)
+    print time.time()-t0
+    print len(results),sum(results),sum(Set(results))
+    results.sort()
+    pprint(results)
 
 
 if __name__ == '__main__': main(100000000)
-    
+# 2906969179 was the final correct answer    
