@@ -4,10 +4,11 @@ Utility functions that have been useful in Project Euler
 
 from sets import Set
 
+def prod(l): return reduce(lambda x,y: x*y,l)
+
 #def gcd(a,b):
 #    if b==0: return a
 #    return gcd(b, a%b)
-
 # This is faster:
 def gcd(a,b):
     while b:
