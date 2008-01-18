@@ -2,6 +2,8 @@
 Utility functions that have been useful in Project Euler
 """
 
+from sets import Set
+
 #def gcd(a,b):
 #    if b==0: return a
 #    return gcd(b, a%b)
@@ -40,7 +42,14 @@ def unique(l,sort=False):
     results = vals.keys()
     if sort:
         results.sort()
-    return results    
+    return results
+
+def isprime_sieve_factory(nmax=1000000):
+    pset = Set(primes(nmax))
+    def isprime(n):
+        assert n<nmax, "%d too large for prime test" % n
+        return n in pset
+    return isprime
 
 def primes(n):
     """\
