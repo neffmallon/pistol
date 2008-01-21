@@ -1031,28 +1031,28 @@ def get_points():
         newdata.append(map(int,line.split(",")))
     return newdata
 
-def dot(v1,v2): return v1[0]*v2[0]+v1[1]*v2[1]
+def signed_area(x1,y1,x2,y2,x3,y3):
+    return (-x2*y1+x3*y1+x1*y2-x3*y2-x1*y3+x2*y3)/2
+
+def orientation(x1,y1,x2,y2,x3,y3):
+    if signed_area(x1,y1,x2,y2,x3,y3) > 0: return 1
+    return -1
+
+o = orientation
+
+def contains(x1,y1,x2,y2,x3,y3,xp=0,yp=0):
+    return o(x1,y1,x2,y2,xp,yp) == o(x2,y2,x3,y3,xp,yp) and\
+           o(x2,y2,x3,y3,xp,yp) == o(x3,y3,x1,y1,xp,yp)
 
 def main():
     data = get_points()
     nint = 0
     for i in range(len(data)):
-    #for i in range(2):
         x1,y1,x2,y2,x3,y3 = data[i]
-        v1 = (x2-x1,y2-y1)
-        v2 = (x3-x1,y3-y1)
-        o = (-x1,-y1)
-
-        p1 = dot(o,v1)/float(dot(v1,v1))
-        # I think I have to remove the p1 component
-        p2 = dot(o,v2)/float(dot(v2,v2))
-        if 0 < p1 < 1 and 0 < p2 < 1:
-            print p1,p2
-            nint+= 1
+        print x1,y1,x2,y2,x3,y3,contains(x1,y1,x2,y2,x3,y3)
+        if contains(x1,y1,x2,y2,x3,y3):
+            nint+=1
     print nint
-    
-    
-    
 
 if __name__ == '__main__': main()
 

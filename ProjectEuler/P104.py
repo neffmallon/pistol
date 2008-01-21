@@ -53,3 +53,5 @@ while 1:
 #ispandigital2  7.9 sec, 7.8 with psyco
 #ispandigital3  7.9 sec, 7.9 with psyco
 #ispandigital4  7.8 sec, 7.8 with psyco
+
+# Turned out to be 329468 as the solution; took me a long time to find it!

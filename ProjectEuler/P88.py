@@ -2,6 +2,7 @@
 
 from pprint import pprint
 from sets import Set
+from math import sqrt
 from Utils import next_partition,prod
 
 def prodsums(n):
@@ -44,13 +45,43 @@ def works_small(nmax=50):
     mps = minprodsums(results)
     print mps
     print sum(Set(mps[:nmax]))
+    
 
-def main(kmax=30):
-    ps = prodsumrange(kmax)
-    ks = ps.keys()
-    ks.sort()
-    for k in ks:
-        print k,min([sum(p) for p in ps[k]])
+def main(kmax=100):
+    # This seems like a good approach, but I need a general way of
+    # generating n-tuples
+    results = [None]*kmax
+    # look for pairs first
+    for i in range(2,kmax):
+        for j in range(i,kmax/i):
+            s = i+j
+            p = i*j
+            diff = p-s
+            index = diff+2 # pairs go with 2
+            if not results[index] or p < prod(results[index]):
+                results[index] = (i,j)
+    # Find triples now
+    for i in range(2,kmax):
+        for j in range(i,kmax/i):
+            for k in range(j,kmax/(i*j)):
+                s = i+j+k
+                p = i*j*k
+                diff = p-s
+                index = diff+3
+                if not results[index] or p < prod(results[index]):
+                    results[index] = (i,j,k)
+    # Find quartets
+    for i in range(2,kmax):
+        for j in range(i,kmax/i):
+            for k in range(j,kmax/(i*j)):
+                for l in range(k,kmax/(i*j*k)):
+                    s = i+j+k+l
+                    p = i*j*k*l
+                    diff = p-s
+                    index = diff+4
+                    if not results[index] or p < prod(results[index]):
+                        results[index] = (i,j,k,l)
+    print results
 
 if __name__ == '__main__': main()
 
