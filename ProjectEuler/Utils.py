@@ -185,6 +185,9 @@ class Rational:
             self.D /= f
         return
 
+    def float(self): return self.N/float(self.D)
+    def int(self): return int(self.float())
+
     def mult(self,other):
         return Rational(self.N*other.N,self.D*other.D)
 
@@ -196,6 +199,8 @@ class Rational:
 
     def __repr__(self):
         return "%d/%d" % (self.N,self.D)
+
+    def isint(self): return self.D == 1
 
 def cf_to_rf(l):
     n = len(l)
