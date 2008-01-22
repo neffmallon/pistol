@@ -18,8 +18,10 @@ digits AND the last nine digits are 1-9 pandigital, find k.
 from Utils import fibonacci
 from sets import Set
 from time import time
+from itertools import count
 
 # Remove checking for length to save time
+zero = "0"
 digits = Set('123456789')
 strdigs = ['1','2','3','4','5','6','7','8','9']
 def ispandigital4(nstr):
@@ -34,14 +36,12 @@ def ispandigital(nstr):
     l.sort()
     return l == strdigs
 
+# Got to i=295553 without finding any solutions
 f = fibonacci()
-i = -1
-while 1:
-    i += 1
+for i in count():
     fi = f.next()
     fstr = str(fi)
-    #if ispandigital4(fstr[:9]): print "FIRST ",i,fstr[:9]
-    if "0" in fstr[:9]+fstr[-9:]: continue
+    if zero in fstr[:9] or zero in fstr[-9:]: continue
     if not ispandigital4(fstr[-9:]): continue
     print "LAST ",i,fstr[-9:]
     if ispandigital4(fstr[:9]):
