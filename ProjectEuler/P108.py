@@ -12,6 +12,7 @@ What is the least value of n for which the number of distinct
 solutions exceeds one-thousand?
 """
 import psyco; psyco.full()
+from time import time
 from pprint import pprint
 from Utils import Rational
 
@@ -25,15 +26,37 @@ def brute(nmax = 50000):
             rj = Rational(1,j)
             rs = ri.add(rj).inverse()
             if rs.isint():
-                v = rs.int()
-                if v in results:
-                    results[v].append((i,j))
+                n = rs.int()
+                if n in results:
+                    results[n].append((i,j))
                 else:
-                    results[v] = [(i,j)]
+                    results[n] = [(i,j)]
+    return results
 
+def brute2(nmax=500):
+    results = {}
+    for n in range(1,nmax+1):
+        for x in range(n+1,2*n+1):
+            y = x*n/(x-n)
+            if n*(x+y) == x*y:
+                v = results.setdefault(n,[])
+                v.append((x,y))
+    return results
+                
+
+def main(nmax=300000):
+    t0 = time()
+    results = brute2(nmax)
+    t1 = time()
+    print "Time for n = %d : %f" % (nmax,t1-t0)
     sortable = [(len(results[k]),k) for k in results]
     sortable.sort()
-    pprint(sortable[-3:])
+    #lk,k = sortable[-1]
+    #print lk,k
+    #pprint(results[k])
+    print "All results: ",
+    pprint(sortable[-50:])
     return
+    
 
-
+if __name__ == '__main__': main()
