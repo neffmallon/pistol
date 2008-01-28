@@ -210,6 +210,10 @@ def cf_to_rf(l):
     return r
 
 
+def issquare(f):
+    from math import sqrt
+    return isint(sqrt(f))
+
 def isint(f): return f == int(f)
 
 def next_partition(p):

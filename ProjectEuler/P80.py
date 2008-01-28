@@ -10,30 +10,33 @@ For the first one hundred natural numbers, find the total of the
 digital sums of the first one hundred decimal digits for all the
 irrational square roots.
 """
-
 from decimal import Decimal,getcontext
-from math import sqrt
+from Utils import issquare
 
-def avg(a,b): return (a+b)/Decimal(2)
+one = Decimal(1)
+two = Decimal(2)
+
+def avg(a,b): return (a+b)/two
 
 def sqrt(n,maxiter=100):
-    f = 1
+    f = one
     for i in range(maxiter):
         f = avg(f,n/f)
     return f
 
 def sum100digits(a):
-    div,mod = divmod(a,1)
-    smod = str(mod)
-    smod = smod.replace("0.","")
-    l = map(int,smod)
-    return sum(l[:100])
-    
-d2 = Decimal(2)
-getcontext().prec=110
-rt2 = sqrt(d2,1000)
-print sum100digits(rt2)
+    s = str(a).replace(".","")[:100]
+    return sum(map(int,s))
 
+def main():
+    import math
+    getcontext().prec=110
+    s = 0
+    for i in range(2,100):
+        if issquare(i): continue
+        d = Decimal(i)
+        sqrt_i = sqrt(d)
+        s += sum100digits(sqrt_i)
+    print s
 
-
-
+if __name__ == '__main__': main()
