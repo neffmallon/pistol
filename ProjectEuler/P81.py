@@ -26,23 +26,43 @@ short_data = """\
 
 def get_data():
     from numpy import array
+    #lines = short_data.splitlines()
+    lines = open("p81_matrix.txt")
     data = []
-    for line in short_data.splitlines():
-    #for line in open("p81_matrix.txt"):
-        data.append(map(int,line.split()))
+    for line in lines:
+        data.append(map(int,line.split(",")))
     return array(data)
 
-def walk_diags(data):
+def diag(k,n):
+    i = min(k,n-1)
+    j = k-i
+    yield i,j
+    while True:
+        i,j = i-1,j+1
+        if i < 0 or j > n-1: break
+        yield i,j
+    return
+
+def walk(data):
     n,m = data.shape
     assert n==m
-    ndiagonals = 2*n  # Number of diagonals in the matrix
-    def nelem_diag(i): # i in range(0,2*n)
-        if i < n: return i+1
-        return 2*n-i
+    for k in range(2*n-1):
+        for i,j in diag(k,n):
+            choices = []
+            if i > 0:
+                choices.append(data[i-1,j])
+            if j > 0:
+                choices.append(data[i,j-1])
+            if not choices: continue
+            data[i,j] += min(choices)
+    print data
+    return
+    
 
 def main():
     data = get_data()
     print data
+    walk(data)
     return
 
 if __name__ == '__main__': main()
