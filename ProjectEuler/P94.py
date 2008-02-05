@@ -12,7 +12,7 @@ Find the sum of the perimeters of every almost equilateral triangle
 with integral side lengths and area and whose perimeters do not exceed
 one billion (1,000,000,000).
 """
-import psyco; psyco.full()
+
 from sets import Set
 from Utils import isint
 from time import time
@@ -23,8 +23,8 @@ def heron_area(a,b,c):
     p = (a+b+c)/2.
     return sqrt(p*(p-a)*(p-b)*(p-c))
 
-def brute1(plimit=20):
-    slimit = plimit/3
+def brute1(plimit=1000):
+    slimit = plimit/3+1
     sump = 0
     for a in xrange(2,slimit):
         for b in [a-1,a+1]:
@@ -36,11 +36,35 @@ def brute1(plimit=20):
     print sump
     return
 
-# See formula2() of P75.py
+def with_triples(pmax = 1000):
+    hmax = (pmax+3)/3
+    trips = pythag_triples(hmax)
+    sump = 0
+    for a,b,c in trips:
+        if abs(c-2*a) == 1:# or abs(c-2*b) == 1:
+            if a%2 == 1 and b%2 == 1: print "Odd area"
+            p = 2*c + 2*a
+            if p > pmax: continue
+            sump += p
+            #print a,b,c
+        elif abs(c-2*b) == 1:
+            # I don't think this can happen
+            print "B triangle found"
+    #sump for p < 10**5 = 51406
+    print "sump for p < %d = %d" % (pmax,sump)
+    return
+
 def pythag_triples(hmax):
-    "generate all pythagorean triples with hypotenuse < hmax"
-    # This is too slow to be practical
-    results ={}
+    """
+    Set() = pythag_triples(hmax)
+
+    generate all pythagorean triples (a,b,c) where a^2 + b^2 = c^2
+    and c < hmax.
+
+    Uses the generator m>n -> a = m^2-n^2, b = 2mn, c = m^2+n^2
+        
+    """
+    results =Set()
     for m in range(1,hmax):
         m2 = m*m
         for n in range(1,m):
@@ -53,21 +77,20 @@ def pythag_triples(hmax):
                 c = l*(m2+n2)
                 if a > b:
                     a,b = b,a
-                if c in results:
-                    results[c].add((a,b))
-                else:
-                    results[c] = Set([(a,b)])
+                results.add((a,b,c))
     return results
-                
 
-if __name__ == '__main__':
-    thou = 1000
-    mill = thou*thou
-    bill = thou*mill
+# Brute1 and with_triples give identical energies for the cases
+#  that I've tested. Also give very similar times.
+
+def main():
+    from time import time
     t0 = time()
-    brute1(bill)
+    with_triples(50000)
     t1 = time()
     print t1-t0
+    brute1(50000)
+    print time()-t0
+    return
 
-
-
+if __name__ == '__main__': main()
