@@ -16,25 +16,44 @@ one billion (1,000,000,000).
 from sets import Set
 from Utils import isint
 from time import time
+from math import sqrt
 
 def heron_area(a,b,c):
     "Area of a triangle with sides a,b,c"
-    from math import sqrt
     p = (a+b+c)/2.
     return sqrt(p*(p-a)*(p-b)*(p-c))
+
+def area2(a,b):
+    "Area of a triangle with sides a,a,b"
+    a2 = a*a
+    b2 = b*b
+    return b*sqrt(4*a2-b2)/4.
 
 def brute1(plimit=1000):
     slimit = plimit/3+1
     sump = 0
     for a in xrange(2,slimit):
+        if a % 10**7 == 0: print "At step ",a
         for b in [a-1,a+1]:
             p = 2*a+b
             if p > plimit: break
-            area = heron_area(a,a,b)
+            area=area2(a,b)
             if isint(area):
                 sump += p
-    print sump
+    print "sump for p < %d = %d" % (plimit,sump)
     return
+
+def brute2(plimit=100):
+    slimit = plimit/3 + 1
+    sump = 0
+    for a in xrange(3,slimit):
+        if isint(area2(a,a+1)):
+            sump += 3*a+1
+        elif isint(area2(a,a-1)):
+            sump += 3*a-1
+    print "sump for p < %d = %d" % (plimit,sump)
+    return
+    
 
 def with_triples(pmax = 1000):
     hmax = (pmax+3)/3
@@ -81,16 +100,25 @@ def pythag_triples(hmax):
     return results
 
 # Brute1 and with_triples give identical energies for the cases
-#  that I've tested. Also give very similar times.
-
+#  that I've tested. Brute1 is much faster, since it scales linearly
+#
+#  pmax          sum_p                  time
+#  50,000        51,406                 0.0779 sec
+#  100,000       51,406                 0.165 sec
+#  10**6         1,905,576              2.256 sec
+#  10**7         12,405,628,833         23.55 sec
+#  10**8         127,140,974,991,072    266.24
+#  10**9         312,530,319,954,683,775 2905 2905
+# This should be right, but it's wrong.
 def main():
     from time import time
-    t0 = time()
-    with_triples(50000)
+    pmax = 10**9
+    #t0 = time()
+    #brute1(pmax)
     t1 = time()
-    print t1-t0
-    brute1(50000)
-    print time()-t0
+    #print t1-t0
+    brute2(pmax)
+    print time()-t1
     return
 
 if __name__ == '__main__': main()
