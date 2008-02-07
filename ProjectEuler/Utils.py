@@ -15,6 +15,17 @@ def gcd(a,b):
         a, b = b, a%b
     return a
 
+def divisors(n):
+    from math import sqrt
+    d = [1]
+    limit = int(sqrt(n))
+    for i in range(2,limit+1):
+        if n%i == 0: 
+            d.append(i)
+            if n/i != i: d.append(n/i)
+    d.sort()
+    return d
+
 def lcm(a,b):
     return a*b/gcd(a,b)
 

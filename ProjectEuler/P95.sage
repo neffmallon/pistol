@@ -14,3 +14,9 @@ def gen_cycle(n,limit=1000000):
         n = sum_div(n)
     return cycle
 
+def cycle_list(nmax):
+    for i in range(2,nmax):
+        cycle = gen_cycle(i)
+        if cycle[-1] == 1: continue
+        print i,cycle
+

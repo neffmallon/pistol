@@ -16,3 +16,9 @@ def gen_cycle(n,limit=Integer(1000000)):
         cycle.append(n)
         n = sum_div(n)
     return cycle
+
+def cycle_list(nmax):
+    for i in range(Integer(2),nmax):
+        cycle = gen_cycle(i)
+        if cycle[-Integer(1)] == Integer(1): continue
+        print i,cycle
