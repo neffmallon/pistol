@@ -5,6 +5,26 @@ from sets import Set
 from math import sqrt
 from Utils import next_partition,prod
 
+defrange = range(10)
+
+def ntuples(n,set=defrange):
+    res = []
+    if n <= 1: return [[i] for i in set]
+    for tup in ntuples(n-1,set):
+        for i in set:
+            res.append(tup+[i])
+    return res
+
+def ntuples2(n,kmax):
+    if n <= 1: return [[i] for i in range(2,kmax)]
+    res = []
+    for tup in ntuples2(n-1,kmax):
+        p = prod(tup)
+        istart = tup[-1]
+        for i in range(istart,kmax/p):
+            res.append(tup + [i])
+    return res
+
 def prodsums(n):
     p = [n]
     results = []
@@ -47,7 +67,7 @@ def works_small(nmax=50):
     print sum(Set(mps[:nmax]))
     
 
-def main(kmax=100):
+def brute(kmax=100):
     # This seems like a good approach, but I need a general way of
     # generating n-tuples
     results = [None]*kmax
@@ -82,6 +102,39 @@ def main(kmax=100):
                     if not results[index] or p < prod(results[index]):
                         results[index] = (i,j,k,l)
     print results
+
+def brute2(kmax=100,tmax=4):
+    # This seems like a good approach, but I need a general way of
+    # generating n-tuples
+    results = [None]*kmax
+    for tlength in range(2,tmax+1):
+        for tup in ntuples2(tlength,kmax):
+            s = sum(tup)
+            p = prod(tup)
+            diff = p-s
+            index = diff + tlength
+            if not results[index] or p < prod(results[index]):
+                results[index] = tup
+    return results
+
+def test_tuples():
+    kmax = 100
+    print ntuples2(4,100)
+    for i in range(2,kmax):
+        for j in range(i,kmax/i):
+            for k in range(j,kmax/(i*j)):
+                for l in range(k,kmax/(i*j*k)):
+                    print [i,j,k,l],
+
+def main():
+    kmax = 12000
+    expansion = 10
+    maxtup = 100
+    results = brute2(kmax*expansion,maxtup)
+    print results[2:(kmax+1)]
+    p = [prod(tup) for tup in results[2:(kmax+1)]]
+    print p
+    print sum(Set(p))
 
 if __name__ == '__main__': main()
 

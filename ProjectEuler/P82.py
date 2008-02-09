@@ -27,39 +27,41 @@ short_data = """\
 
 def get_data():
     from numpy import array
-    lines = short_data.splitlines()
-    #lines = open("p81_matrix.txt")
+    #lines = short_data.splitlines()
+    lines = open("p81_matrix.txt")
     data = []
     for line in lines:
-        #data.append(map(int,line.split(",")))
-        data.append(map(int,line.split()))
+        data.append(map(int,line.split(",")))
+        #data.append(map(int,line.split()))
     return array(data)
-
 
 def walk(data):
     n,m = data.shape
-    for j in range(m):
+    for col in range(1,m):
         new = [None]*n
-        for i in range(n):
+        for row in range(n):
+            # Find the minimum path from an element in column col-1
+            #  to column col
             choices = []
-            if i > 0:
-                choices.append(data[i-1,j])
-            if j > 0:
-                choices.append(data[i,j-1])
-            else:
-                choices.append(0)
-            if i < n-1:
-                choices.append(data[i+1,j])
-            if not choices: continue
-            new[i] = data[i,j] + min(choices)
-        data[:,j] = new
-    print data
+            choices.append(data[row,col-1])
+            for irow in range(0,row): # Go up:
+                choices.append(data[irow,col-1]+sum(data[irow:row,col]))
+            for irow in range(row+1,n): # Go down:
+                choices.append(data[irow,col-1]+sum(data[(row+1):(irow+1),col]))
+            #if row > 0:
+            #    choices.append(data[row-1,col-1]+data[row-1,col])
+            #if row < n-1:
+            #    choices.append(data[row+1,col-1]+data[row+1,col])
+            new[row] = data[row,col] + min(choices)
+        data[:,col] = new
+    if m < 10: print data
+    print "Result = ",min(data[:,-1])
     return
     
 
 def main():
     data = get_data()
-    print data
+    if data.shape[0] < 10: print data
     walk(data)
     return
 
