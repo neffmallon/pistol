@@ -15,7 +15,7 @@ def gcd(a,b):
         a, b = b, a%b
     return a
 
-def divisors(n):
+def proper_divisors(n):
     from math import sqrt
     d = [1]
     limit = int(sqrt(n))
@@ -25,6 +25,10 @@ def divisors(n):
             if n/i != i: d.append(n/i)
     d.sort()
     return d
+
+def divisors(n):
+    "Also include n"
+    return proper_divisors(n) + [n]
 
 def lcm(a,b):
     return a*b/gcd(a,b)
@@ -221,11 +225,20 @@ def cf_to_rf(l):
     return r
 
 
-def issquare(f):
-    from math import sqrt
-    return isint(sqrt(f))
+def isqrt(n):
+    xn = 1
+    xn1 = (xn + n/xn)/2
+    while abs(xn1 - xn) > 1:
+        xn = xn1
+        xn1 = (xn + n/xn)/2
+    while xn1*xn1 > n:
+        xn1 -= 1
+    return xn1
+
+def issquare(n): return isqrt(n)**2 == n
 
 def isint(f): return f == int(f)
+def is_int_frac(a,b): return (a%b==0)
 
 def next_partition(p):
     "Taken from the perl monks recipe 621859, which I don't understand"

@@ -11,10 +11,11 @@ For n = 4 there are exactly three distinct solutions:
 What is the least value of n for which the number of distinct
 solutions exceeds one-thousand?
 """
-import psyco; psyco.full()
+
 from time import time
 from pprint import pprint
-from Utils import Rational
+from math import sqrt
+from Utils import Rational,divisors
 
 def brute(nmax = 50000):
     # 10,000 only lead to items that had 58 solutions (1/840),
@@ -42,21 +43,35 @@ def brute2(nmax=500):
                 v = results.setdefault(n,[])
                 v.append((x,y))
     return results
-                
 
-def main(nmax=300000):
-    t0 = time()
-    results = brute2(nmax)
-    t1 = time()
-    print "Time for n = %d : %f" % (nmax,t1-t0)
-    sortable = [(len(results[k]),k) for k in results]
-    sortable.sort()
-    #lk,k = sortable[-1]
-    #print lk,k
-    #pprint(results[k])
-    print "All results: ",
-    pprint(sortable[-50:])
+def clever(nmax):
+    results = {}
+    for a in xrange(2,nmax):
+        for b in xrange(1,nmax):
+            x = a*b
+            y = a*(a-1)*b
+            n = b*(a-1)
+            r = results.setdefault(n,[])
+            r.append((x,y))
+    return results
+
+def brian_forum_nsols(n):
+    return sum(1 for x in range(n+1, n*2+1) if ((n*x) % (x-n)==0))
+ 
+def brian_forum_solution():
+    f = 2*3*5*7*11*13
+    for i in xrange(f,f*17,f):
+        if brian_forum_nsols(i)>=1000:
+            print i
+            break
+
+def main(nmax=10000):
+    for i in range(1,20):
+        print i,brian_forum_nsols(i),len(divisors(i))
     return
-    
+
+# The correct answer is 180180. Don't know how I got that one, but evidently
+# I solved it. One of the postings in the forum cited the Sloane page:
+# http://www.research.att.com/~njas/sequences/A018892
 
 if __name__ == '__main__': main()
