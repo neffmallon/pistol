@@ -15,6 +15,8 @@ def gcd(a,b):
         a, b = b, a%b
     return a
 
+def gcd3(a,b,c): return gcd(gcd(a,b),c)
+
 def proper_divisors(n):
     from math import sqrt
     d = [1]
