@@ -4,12 +4,14 @@ Utility functions that have been useful in Project Euler
 
 from sets import Set
 
+def get_wordgen(fname="/usr/share/dict/words"):
+    return (line.strip() for line in open(fname))
+
+def get_wordlist(fname): return list(get_wordgen(fname))
+def get_wordset(fname): return Set(get_wordgen(fname))
+
 def prod(l): return reduce(lambda x,y: x*y,l)
 
-#def gcd(a,b):
-#    if b==0: return a
-#    return gcd(b, a%b)
-# This is faster:
 def gcd(a,b):
     while b:
         a, b = b, a%b
