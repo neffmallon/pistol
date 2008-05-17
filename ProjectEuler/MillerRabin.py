@@ -32,6 +32,9 @@ def test(a, n):
   Returns:
     - True, if n is complex.
     - False, if n is probably prime.
+
+  This function computes the witnesses, which are of the form:
+  a**(n-1) % n == 1 -> True
   """
   b = toBinary(n - 1)
   d = 1
@@ -60,9 +63,21 @@ def MillerRabin(n, s = 50):
       return False # n is complex
   return True # n is prime
 
+def RickTests(nmax=200,ntrials=15):
+    """\
+    Check Mersenne primes up to nmax for primality
+    """
+    two_to_n = 2
+    for i in range(2,nmax):
+        two_to_n *= 2
+        n = two_to_n - 1
+        if MillerRabin(i,ntrials*2):
+            print i,n,MillerRabin(n,ntrials)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print __doc__
+        RickTests()
         sys.exit()
     if len(sys.argv) >= 2:
         n = int(sys.argv[1])

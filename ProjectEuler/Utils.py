@@ -2,7 +2,19 @@
 Utility functions that have been useful in Project Euler
 """
 
+from math import sqrt
 from sets import Set
+from MillerRabin import isprime
+from operator import mul
+
+def timeit(command,*args,**kwargs):
+    from time import time
+    ntimes = kwargs.get('ntimes',20)
+    start = time()
+    for i in range(ntimes): retval = command(*args)
+    end = time()
+    print "timeit(%s): %f seconds" % (command.__name__,(end-start)/ntimes)
+    return retval
 
 def get_wordgen(fname="/usr/share/dict/words"):
     return (line.strip() for line in open(fname))
@@ -10,7 +22,7 @@ def get_wordgen(fname="/usr/share/dict/words"):
 def get_wordlist(fname): return list(get_wordgen(fname))
 def get_wordset(fname): return Set(get_wordgen(fname))
 
-def prod(l): return reduce(lambda x,y: x*y,l)
+def prod(l): return reduce(mul,l)
 
 def gcd(a,b):
     while b:
@@ -19,11 +31,18 @@ def gcd(a,b):
 
 def gcd3(a,b,c): return gcd(gcd(a,b),c)
 
+def prime_factors(n,ps):
+    factors = []
+    for p in ps:
+        if p > n: break
+        if n % p == 0:
+            factors.append(p)
+    return factors
+
 def proper_divisors(n):
-    from math import sqrt
     d = [1]
     limit = int(sqrt(n))
-    for i in range(2,limit+1):
+    for i in xrange(2,limit+1):
         if n%i == 0: 
             d.append(i)
             if n/i != i: d.append(n/i)
@@ -161,7 +180,7 @@ def xcombos(items,n,unique=True):
 def contfrac(f,nterms=10):
     f,rem = divmod(f,1)
     frac = [int(f)]
-    for i in range(nterms-1):
+    for i in xrange(nterms-1):
         if rem == 0: break
         f,rem = divmod(1/rem,1)
         frac.append(int(f))
@@ -171,7 +190,7 @@ def cf_to_frac(l):
     # would be nice to have a rational version of this
     n = len(l)
     f = l[n-1]
-    for i in range(n-2,-1,-1):
+    for i in xrange(n-2,-1,-1):
         f = l[i] + 1/float(f)
     return f
 
@@ -224,7 +243,7 @@ class Rational:
 def cf_to_rf(l):
     n = len(l)
     r = Rational(l[n-1])
-    for i in range(n-2,-1,-1):
+    for i in xrange(n-2,-1,-1):
         r = Rational(l[i]).add(r.inverse())
     return r
 

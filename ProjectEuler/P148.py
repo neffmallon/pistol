@@ -1,4 +1,41 @@
+from pprint import pprint
 from Utils import prod
+from pylab import *
+
+# The pattern we see looks like:
+"""\
+                              _                              
+                             _ _                             
+                            _ _ _                            
+                           _ _ _ _                           
+                          _ _ _ _ _                          
+                         _ _ _ _ _ _                         
+                        _ _ _ _ _ _ _                        
+                       _ * * * * * * _                       
+                      _ _ * * * * * _ _                      
+                     _ _ _ * * * * _ _ _                     
+                    _ _ _ _ * * * _ _ _ _                    
+                   _ _ _ _ _ * * _ _ _ _ _                   
+                  _ _ _ _ _ _ * _ _ _ _ _ _                  
+                 _ _ _ _ _ _ _ _ _ _ _ _ _ _                 
+                _ * * * * * * _ * * * * * * _                
+               _ _ * * * * * _ _ * * * * * _ _               
+              _ _ _ * * * * _ _ _ * * * * _ _ _              
+             _ _ _ _ * * * _ _ _ _ * * * _ _ _ _             
+            _ _ _ _ _ * * _ _ _ _ _ * * _ _ _ _ _            
+           _ _ _ _ _ _ * _ _ _ _ _ _ * _ _ _ _ _ _           
+          _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _          
+         _ * * * * * * _ * * * * * * _ * * * * * * _         
+        _ _ * * * * * _ _ * * * * * _ _ * * * * * _ _        
+       _ _ _ * * * * _ _ _ * * * * _ _ _ * * * * _ _ _       
+      _ _ _ _ * * * _ _ _ _ * * * _ _ _ _ * * * _ _ _ _      
+     _ _ _ _ _ * * _ _ _ _ _ * * _ _ _ _ _ * * _ _ _ _ _     
+    _ _ _ _ _ _ * _ _ _ _ _ _ * _ _ _ _ _ _ * _ _ _ _ _ _    
+   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _   
+  _ * * * * * * _ * * * * * * _ * * * * * * _ * * * * * * _  
+ _ _ * * * * * _ _ * * * * * _ _ * * * * * _ _ * * * * * _ _ 
+"""
+# but it's not that simple, because at 49 we start bigger triangles.
 
 def gen_pascal():
     last = []
@@ -54,20 +91,52 @@ def test():
 
 def guess(n):
     div,mod = divmod(n,7)
-    print (div,mod),
+    #print (div,mod),
     if div == 0: return 0
     return n-(div+1)*(mod+1)+1
 
+def gen_triangle(nrows):
+    rows = []
+    for i in range(nrows):
+        rows.append(list(gen_pascal_row_fast(i)))
+    return rows
+
+def text_rows(rows):
+    trows = []
+    for row in rows:
+        tmp = []
+        for i in row:
+            if i%7 == 0: tmp.append('*')
+            else: tmp.append('_')
+        trows.append(' '.join(tmp))
+    return trows
+
+def plot_rows():
+    nrows = 50
+    rows = gen_triangle(nrows)
+    trows = text_rows(rows)
+    for trow in trows:
+        print trow.center(2*nrows+1)
+    return
+
 def main():
-    for i in range(0,200):
+    n = 0
+    div7 = 0
+    data = []
+    for i in range(0,20000):
         row = gen_pascal_row_fast(i)
-        div7 = 0
         for el in row:
+            n += 1
             if el % 7 == 0:
                 div7 += 1
-        print i,div7,guess(i)
+        data.append(div7/float(n))
+    plot(data)
+    show()
+    return
                    
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    main()
+    #plot_rows()
 
 
     
