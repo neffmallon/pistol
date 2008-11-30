@@ -14,8 +14,8 @@ one billion (1,000,000,000).
 """
 import psyco; psyco.full()
 from sets import Set
+
 from Utils import isint
-from time import time
 from math import sqrt
 
 def heron_area(a,b,c):
@@ -36,30 +36,33 @@ def isint_area(a,b):
 def brute1(plimit=1000):
     slimit = plimit/3+1
     sump = 0
-    for a in xrange(2,slimit):
+    for a in xrange(3,slimit):
         if a % 10**7 == 0: print "At step ",a
         for b in [a-1,a+1]:
             p = 2*a+b
             if p > plimit: break
             area=area2(a,b)
             if isint(area):
+                #print a,a,b
                 sump += p
     print "sump for p < %d = %d" % (plimit,sump)
     return
 
 def brute2(plimit=100,verbose=False):
-    slimit = plimit/3 + 1
+    slimit = plimit/3 + 5
     sump = 0
     for a in xrange(3,slimit):
-        for b in [a-1,a+1]:
-            if isint_area(a,b):
-                p = 2*a+b
-                if verbose: print a,a,b,p
-                if p > plimit: continue
-                sump += p
+        if a % 10**7 == 0: print "At step ",a
+        if isint(area2(a,a+1)):
+            p = 3*a+1
+            if p > plimit: continue
+            sump += p
+        if isint(area2(a,a-1)):
+            p = 3*a-1
+            if p > plimit: continue
+            sump += p
     print "sump for p < %d = %d" % (plimit,sump)
     return
-
 def with_triples(pmax = 1000):
     hmax = (pmax+3)/3
     trips = pythag_triples(hmax)
@@ -103,7 +106,6 @@ def pythag_triples(hmax):
                     a,b = b,a
                 results.add((a,b,c))
     return results
-
 # Brute1 and with_triples give identical energies for the cases
 #  that I've tested. Brute1 is much faster, since it scales linearly
 #
@@ -113,7 +115,7 @@ def pythag_triples(hmax):
 #  10**6         1,905,576              2.256 sec
 #  10**7         12,405,628,833         23.55 sec
 #  10**8         127,140,974,991,072    266.24
-#  10**9         312,530,319,954,683,775 2905 2905
+#  10**9         312,530,319,954,683,775     2905
 # This should be right, but it's wrong.
 # I modified my search, and got:
 #  10**7         9,973,078              6.9 sec
