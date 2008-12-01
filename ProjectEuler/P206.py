@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Find the unique positive integer whose square has the form
-1_2_3_4_5_6_7_8_9_0, where each “_” is a single digit.
+1_2_3_4_5_6_7_8_9_0, where each '_' is a single digit.
 """
 from math import sqrt
 import re
@@ -14,7 +14,13 @@ istart = int(sqrt(imin))
 iend = int(sqrt(imax))+1
 
 print (istart,iend)
-for i in xrange(istart,iend):
-    if pat.math(str(i*i)): print i
+#for i in xrange(istart,iend):
+#    if pat.match(str(i*i)):
+#        print i
+#        break
+#    if i%1e7==0: print "reached %d without solution" % i
+isol = 1389019170
+print str(isol*isol)
+
 
 
