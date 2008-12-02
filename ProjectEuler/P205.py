@@ -43,7 +43,7 @@ def avg(seq):
     return s/float(n)
 
 def main(ntries=1e8):
-    c = Counter(57320085, 100000000)
+    c = Counter(114635733, 200000000)
     for i in xrange(int(ntries)):
         roll6 = rollsum(6,6)
         roll4 = rollsum(9,4)
