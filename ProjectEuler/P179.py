@@ -29,7 +29,7 @@ def test_divisors(N):
         print i,ndivisors(i)
 
 if __name__ == '__main__':
-    #main()
-    test_divisors(17)
+    main()
+    #test_divisors(17)
 
 # 986451 was incorrect, as were 986450 and 986452
