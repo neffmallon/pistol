@@ -17,7 +17,6 @@ We can see that the 7th triangle number, 28, is the first triangle number to hav
 
 Which is the first triangle number to have over five-hundred divisors?
 """
-import psyco; psyco.full()
 from math import sqrt
 
 def ndivisors(n):
@@ -30,7 +29,8 @@ def ndivisors(n):
 
 # Approximate the number of divisors by the number of
 #  n and n+1
-for i in range(10000,15000):
+#for i in range(10000,15000):
+for i in range(15000):
     if i % 2 == 0: # i is even
         ndi = ndivisors(i/2)
         ndi2 = ndivisors(i+1)

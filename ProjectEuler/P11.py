@@ -59,26 +59,28 @@ datatxt = """\
 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48\
 """
 
+N = 20
+Np = 4
 data = []
 for line in datatxt.splitlines():
     data.append(map(int,line.split()))
 data = array(data)
 
 tuples = []
-for row in range(20):
-    for col in range(20):
-        if col < 16: # east is possible
-            tuples.append(tuple(data[row,col:col+4]))
-        if row < 16: # south is possible
-            tuples.append(tuple(data[row:row+4,col]))
-        if row < 16 and col< 16:
+for row in range(N):
+    for col in range(N):
+        if col < N-Np: # east is possible
+            tuples.append(tuple(data[row,col:col+Np]))
+        if row < N-Np: # south is possible
+            tuples.append(tuple(data[row:row+Np,col]))
+        if row < N-Np and col< N-Np:
             t = []
-            for i in range(4):
+            for i in range(Np):
                 t.append(data[row+i,col+i])
             tuples.append(tuple(t))
-        if row < 16 and col > 4: # sw is possible
+        if row < N-Np and col > Np: # sw is possible
             t = []
-            for i in range(4):
+            for i in range(Np):
                 t.append(data[row+i,col-i])
             tuples.append(tuple(t))
 
