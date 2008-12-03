@@ -31,8 +31,8 @@ def dice(nsides=6):
     from random import randint
     return randint(1,nsides)
 
-def rollsum(ntimes=1,nsides=6):
-    return sum(dice(nsides) for i in xrange(ntimes))
+def rollsum(nrolls=1,nsides=6):
+    return sum(dice(nsides) for i in xrange(nrolls))
 
 def avg(seq):
     s = 0
@@ -42,8 +42,41 @@ def avg(seq):
         n += 1
     return s/float(n)
 
-def main(ntries=1e8):
-    c = Counter(114635733, 200000000)
+def dist4():
+    """
+    Compute the distribution of 9 rolls of a 4-sided dice.
+    """
+    d = [0]*37
+    res = range(1,5)
+    for i in res:
+        for j in res:
+            for k in res:
+                for l in res:
+                    for m in res:
+                        for n in res:
+                            for o in res:
+                                for p in res:
+                                    for q in res:
+                                        d[i+j+k+l+m+n+o+p+q] += 1
+    return d
+
+def dist6():
+    """
+    Compute the distribution of 6 rolls of a 6-sided dice.
+    """
+    d = [0]*37
+    res = range(1,7)
+    for i in res:
+        for j in res:
+            for k in res:
+                for l in res:
+                    for m in res:
+                        for n in res:
+                            d[i+j+k+l+m+n] += 1
+    return d
+
+def naive(ntries=1e8):
+    c = Counter(171944695, 300000000)
     for i in xrange(int(ntries)):
         roll6 = rollsum(6,6)
         roll4 = rollsum(9,4)
@@ -54,6 +87,23 @@ def main(ntries=1e8):
         if i % 3e5 == 0: print i/1e5,c.curr()
     print c.summary()
     return
+
+def main():
+    d4 = dist4()
+    sum4 = sum(d4)
+    d6 = dist6()
+    sum6 = sum(d6)
+    print d4
+    print d6
+    print sum4,sum6
+    N = len(d4)
+    prob = 0.0
+    denom = float(sum4*sum6)
+    for i in range(N):
+        for j in range(i+1,N):
+            prob += d6[i]*d4[j]/denom
+    print prob
+            
     
 
 if __name__ == '__main__': main()
