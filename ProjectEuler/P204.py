@@ -10,22 +10,31 @@ the generalised Hamming numbers of type 5.
 How many generalised Hamming numbers of type 100 are there which don't
 exceed 10^(9)?
 """
+from math import log
+from sets import Set
 
-def hamming_type(n=5,nmax=10**6,doprint=True):
+def hamming_type(n=100,nmax=10**9):
     from Utils import primes
-    from BitVector import BitVector
-    ps = [1] + primes(n)
-    N = nmax+1
-    data = BitVector(size=N)
-    np = len(ps)
-    for i in range(n):
-        for p in ps:
-            if p*i < nmax:
-                data[p*i] = 1
-    if doprint:
-        print [i for i in range(1,N) if data[i]]
-    print "There are %d hamming numbers of type %d that don't exceed %d" % (
-        sum(data),n,nmax)
+    ps = primes(n)
+    hs = Set([1] + ps )
+    npass = 50
+    nham = 0
+    print "After %d passes, there are %d hamming numbers of type %d less than %d" % (-1,len(hs),n,nmax+1)
+    for i in range(npass):
+        toadd = []
+        for a in hs:
+            for b in ps:
+                if a*b < nmax:
+                    toadd.append(a*b)
+        for ab in toadd:
+            hs.add(ab)
+        print "After %d passes, there are %d hamming numbers of type %d less than %d" % (i,len(hs),n,nmax+1)
+        if nham == len(hs):
+            break
+        nham = len(hs)
+
+    if len(hs) < 40: 
+        print list(hs)
     return
 
 if __name__ == '__main__':
