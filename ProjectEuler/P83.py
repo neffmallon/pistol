@@ -56,40 +56,89 @@ short_data = """\
 537	699	497	121	956
 805	732	524	37	331"""
 
-def get_data():
-    lines = short_data.splitlines()
-    #lines = open("p81_matrix.txt")
+def get_data(read=True):
+    if read:
+        lines = open("p81_matrix.txt")
+    else:
+        lines = short_data.splitlines()
     data = []
     for line in lines:
-        #data.append(map(int,line.split(",")))
-        data.append(map(int,line.split()))
+        if read:
+            data.append(map(int,line.split(",")))
+        else:
+            data.append(map(int,line.split()))
     return array(data)
 
-def tuple2ij(i,j,N):
-    return i*N+j
+def adjacent_unvisited(I,J,visited):
+    N = visited.shape[0]
+    points = []
+    for k,l in [(I+1,J),(I-1,J),(I,J+1),(I,J-1)]:
+        if k < 0 or k >= N or l < 0 or l >= N: continue
+        if visited[k,l]: continue
+        points.append((k,l))
+    return points
 
-def ij2tuple(ij,N):
-    return ij/N,ij%N
+def find_nearest_unvisited(dist,visited):
+    N = dist.shape[0]
+    candidates = []
+    for k in range(N):
+        for l in range(N):
+            if not visited[k,l]:
+                candidates.append((dist[k,l],k,l))
+    candidates.sort()
+    return candidates[0]
+
+def find_nearest_neighbor(dist,points):
+    candidates = [(dist[k,l],k,l) for k,l in points]
+    candidates.sort()
+    return candidates[0]
 
 def main():
     data = get_data()
     N = data.shape[0]
     print data
+
+    # Step 1
     dist = zeros(data.shape,int)
-    dist[:,:] = 10**9
-    dist[0,0] = 0
-    print dist
-    visited = zeros(data.shape,bool)
-    print visited
+    visited = zeros(data.shape,bool) # Step 3: 0->False
     previ = zeros(data.shape,int)
-    previ[:,:] = -1
-    print previ
     prevj = zeros(data.shape,int)
+    I,J = 0,0 # Step 5
+
+    # Step 2
+    dist[:,:] = 10**9
+    dist[0,0] = data[0,0]
+    print dist
+
+    print visited
+
+    # Step 4
+    previ[:,:] = -1
     prevj[:,:] = -1
+    print previ
     print prevj
-    current = 0,0
+
+    newdist = 0
     while True:
-        
+        if I==N-1 and J==N-1: break
+        print newdist,I,J
+        visited[I,J] = True # Step 6
+        points = adjacent_unvisited(I,J,visited)
+        for k,l in points:
+            if dist[I,J] + data[k,l] < dist[k,l]:
+                dist[k,l] = dist[I,J] + data[k,l]
+                previ[k,l] = I
+                prevj[k,l] = J
+        newdist,I,J = find_nearest_unvisited(dist,visited)
+        #newdist,I,J = find_nearest_neighbor(dist,points)
+    print newdist,dist[N-1,N-1]
+
+    while True:
+        if I==0 and J==0: break
+        I,J = previ[I,J],prevj[I,J]
+        print I,J
+
+
     return
 
 if __name__ == '__main__':
