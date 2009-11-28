@@ -17,28 +17,31 @@ How many numbers below a googol (10**100) are not bouncy?
 
 from Utils import num_to_digits,ndigits
 
-def increasing(n):
-    d = num_to_digits(n)
-    for i in range(len(d)-1):
-        if d[i] > d[i+1]: return False
-    return True
+def isbouncy(n):
+    digits = num_to_digits(n)
+    ndig = len(digits)
+    increasing = False
+    decreasing = False
+    for i in range(1,ndig):
+        if digits[i-1] < digits[i]:
+            increasing = True
+        elif digits[i-1] > digits[i]:
+            decreasing = True
+        if increasing and decreasing: return True
+    return False
 
-def decreasing(n):
-    d = num_to_digits(n)
-    for i in range(len(d)-1):
-        if d[i] < d[i+1]: return False
-    return True
+def report(i,bouncy): print "There are %d not bouncy below %d" % (i-bouncy,i)
 
-def brute(dmax = 7):
-    nnb = [0,9] # 1-9 are not bouncy
-    for d in range(2,dmax):
-        print "%d-digit numbers" % d
-        nnb.append(0)
-        for i in range(10**(d-1),10**d):
-            if increasing(i) or decreasing(i): nnb[d] += 1
-        print "    %d are not bouncy" % nnb[d]
-    print "for the numbers below 10**%d, %d are not bouncy" % (dmax,sum(nnb))
-    return
+def count_below(n=1000000):
+    bouncy = 0
+    for i in xrange(100,n):
+        if isbouncy(i):
+            bouncy += 1
+        if i % (n/10) == 0: report(i,bouncy)
+    report(n,bouncy)
+
+if __name__ == '__main__':
+    count_below(10**10)
 
 # (1-digit numbers
 #     9 are not bouncy)

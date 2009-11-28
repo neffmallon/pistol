@@ -25,23 +25,24 @@ from Utils import num_to_digits
 def isbouncy(n):
     digits = num_to_digits(n)
     ndig = len(digits)
-    increasing = True
-    decreasing = True
+    increasing = False
+    decreasing = False
     for i in range(1,ndig):
-        if digits[i] < digits[i-1]:
-            increasing = False
-            break
-    for i in range(1,ndig):
-        if digits[i] > digits[i-1]:
-            decreasing = False
-            break
-    return not (increasing or decreasing)
+        if digits[i-1] < digits[i]:
+            increasing = True
+        elif digits[i-1] > digits[i]:
+            decreasing = True
+        if increasing and decreasing: return True
+    return False
 
-bouncy = []
-for i in range(100,1590000):
+nbouncy = 0
+for i in xrange(100,1590000):
     if isbouncy(i):
-        bouncy.append(i)
-    if i > 1580000 :
-        frac = len(bouncy)/float(i)
-        print i,frac
+        nbouncy += 1
+
+    frac = nbouncy*100/i
+    if frac == 99:
+        print i,nbouncy,frac
+        break
+
 

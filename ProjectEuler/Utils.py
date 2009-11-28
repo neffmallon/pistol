@@ -3,7 +3,6 @@ Utility functions that have been useful in Project Euler
 """
 
 from math import sqrt
-from sets import Set
 from MillerRabin import isprime
 from operator import mul
 
@@ -20,7 +19,7 @@ def get_wordgen(fname="/usr/share/dict/words"):
     return (line.strip() for line in open(fname))
 
 def get_wordlist(fname): return list(get_wordgen(fname))
-def get_wordset(fname): return Set(get_wordgen(fname))
+def get_wordset(fname): return set(get_wordgen(fname))
 
 def prod(l): return reduce(mul,l)
 
@@ -96,7 +95,7 @@ def unique(l,sort=False):
     return results
 
 def isprime_sieve_factory(nmax=1000000):
-    pset = Set(primes(nmax))
+    pset = set(primes(nmax))
     def isprime(n):
         assert n<nmax, "%d too large for prime test" % n
         return n in pset
@@ -137,9 +136,9 @@ def sortcopy(l):
     return l2
 
 def isperm(a,b):
-    as = str(a)
+    aas = str(a)
     bs = str(b)
-    return len(as) == len(bs) and Set(as) == Set(bs)
+    return len(aas) == len(bs) and set(aas) == set(bs)
 
 def permute(iterable) :
      if len(iterable) == 1 : yield iterable
