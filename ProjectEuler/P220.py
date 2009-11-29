@@ -20,6 +20,10 @@ the highlighted spot at (18,16) is the position reached after 500
 steps.
 """
 
+from itertools import islice
+
+from pylab import plot,show
+
 def update_string(s):
     """
     Use the Heigway Dragon rules to update a string
@@ -67,19 +71,101 @@ def walk(s,n):
             break
     return x,y
 
-def main():
-    import doctest; doctest.testmod()
+def compress(s,tonum=False):
+    tr = {'A':0,'B':1,'C':2,'D':3}
+    s = s.replace('FaRbFRRL','A') #FRFR
+    s = s.replace('FaLbFRRL','B') #FLFR
+    s = s.replace('FaRbFRLL','C') #FRFL
+    s = s.replace('FaLbFRLL','D') #FLFL
+    if tonum: return [tr[c] for c in s]
+    return s
+
+def limit(s,n=10):
+    if len(s) > n: return s[:n]
+    return s
+
+def find_period(s):
+    """
+    Find the minimum period of a string of characters
+    >>> find_period('AAAA')
+    1
+    >>> find_period('ABABABAB')
+    2
+    >>> find_period('ABCABC')
+    3
+    >>> find_period('ABCDABCDABCDABCE')
+    0
+    >>> find_period('ABCDABCDABCDABCD')
+    4
+    """
+    n = len(s)
+    for per in range(1,n/2+1):
+        isper = True
+        for i in range(1,n/per):
+            for j in range(per):
+                if s[j] != s[j+i*per]: isper = False
+        if isper: return per
+    return 0
+
+def startsame(s1,s2):
+    """
+    Find the length that the two strings are the same at the start
+    >>> startsame('a','abcdef')
+    1
+    >>> startsame('a','bcdef')
+    0
+    """
+    n = min(len(s1),len(s2))
+    for i in range(n):
+        if s1[i] != s2[i]: return i
+    return n
+
+def heigh_iter(nmax=None):
     D = 'Fa'
-    for i in range(10):
+    while True:
+        yield D
+        nchar = len(D)
+        Dnew = update_string(D)
+        D = subtract_from_start(Dnew,D)
+    return
+
+def subtract_from_start(s,subset):
+    """\
+    Subtract a subset from the start of s, assuming
+    that s starts with subset
+    >>> subtract_from_start('abcdefg','abc')
+    'defg'
+
+    If s doesn't start with subset, return None
+    >>> subtract_from_start('abcdefg','abq')
+    """
+    if not s.startswith(subset):
+        return None
+    return s[len(subset):]
+
+def main():
+    D = 'Fa'
+    Dincr = ''
+    hi = heigh_iter()
+    for i in range(4):
+        Dincr += hi.next()
+        print D,Dincr
         D = update_string(D)
-    print count_occurrences('F',D)
-    print walk(D,500)
-    # This all gives the results that the examples do. However,
-    # I don't know how to generate D50, which will be 10**16 long.
-    # I also don't know how to walk 10**12 steps along it.
+        
+    #walk(D,500) # gives (18,16)
+
+    # No period found
+    #print find_period(limit(compress(D),500))
+
+    # Observation: Dn *always* starts with Dn-1.
+    # However, this doesn't help me make a generator for only the next
+    #  portion
+
+    # Observation: 
     return
 
 if __name__ == '__main__':
+    import doctest; doctest.testmod()
     main()
     
     
