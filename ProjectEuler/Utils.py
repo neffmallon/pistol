@@ -76,6 +76,14 @@ def fibonacci():
         yield n2
     return
 
+factcache = [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
+def ffact(n):
+    if n < len(factcache): return factcache[n]
+    return n*ffact(n-1)
+
+def nperm(n,m): return ffact(n)/ffact(n-m)
+def ncomb(n,m): return nperm(n,m)/ffact(m)
+
 def factorial(n):
     if n == 0:
         return 1
