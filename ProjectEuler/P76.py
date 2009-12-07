@@ -52,15 +52,20 @@ def next_partition(p):
     p2.append(x)
     return p2
 
-n = 50
-p = [n]
-npart = 0
-while 1:
-    #print p
-    p = next_partition(p)
-    if not p: break
-    npart += 1
-print npart,upper_bound(n)
+def main():
+    n = 50
+    p = [n]
+    npart = 0
+    while 1:
+        #print p
+        p = next_partition(p)
+        if not p: break
+        npart += 1
+    print npart,partition_upper_bound(n)
+    return
+
+if __name__ == '__main__':
+    main()
 
     
 

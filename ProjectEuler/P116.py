@@ -1,24 +1,26 @@
 #!/usr/bin/env python
 
 """
-Solutions for a 5-long row:
 
-Red  2-long
-0
-1
-2
-3
-0,2
-0,3
-1,3
+A row of five black square tiles is to have a number of its tiles
+replaced with coloured oblong tiles chosen from red (length two),
+green (length three), or blue (length four).
 
-Green 3-long
-0
-1
-2
+If red tiles are chosen there are exactly seven ways this can be done.
+RR___ _R___ __RR_ RRRR_ RR_RR _RRRR
 
-Blue 4-long
-0,1
+If green tiles are chosen there are three ways.
+GGG__ _GGG_ __GGG
+
+And if blue tiles are chosen there are two ways.
+_BBBB BBBB_
+
+Assuming that colours cannot be mixed there are 7 + 3 + 2 = 12 ways of
+replacing the black tiles in a row measuring five units in length.
+
+How many different ways can the black tiles in a row measuring fifty
+units in length be replaced if colours cannot be mixed and at least
+one coloured tile must be used?
 
 """
 
