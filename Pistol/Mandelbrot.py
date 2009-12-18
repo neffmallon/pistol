@@ -5,9 +5,16 @@
 
 import os
 
-def Mandelbrot(acorn=-2.0,bcorn=-1.250,size=2.5,
-               width=300,height=300,iters=100):
+def Mandelbrot(**kwargs):
     import Image,ImageDraw
+    acorn = kwargs.get('acorn',-2.0)
+    bcorn = kwargs.get('bcorn',-1.25)
+    size = kwargs.get('size',2.5)
+    width = kwargs.get('width',800)
+    height = kwargs.get('height',800)
+    iters = kwargs.get('iters',170)
+    fname = kwargs.get('fname','mandelbrot.png')
+
     img = Image.new("RGB",(width,height),(255,255,255))
     draw = ImageDraw.Draw(img)
     for k in range(width):
@@ -25,8 +32,12 @@ def Mandelbrot(acorn=-2.0,bcorn=-1.250,size=2.5,
 
             draw.point((k,l),fill=color)
 
-    img.save('test.png','PNG')
-    os.system('display test.png')
+    img.save(fname,'PNG')
+    try:
+        #os.system('display test.png')
+        os.system('open %s' % fname)
+    except:
+        pass
     return
 
 def get_color(a,cmin=0,cmax=100):

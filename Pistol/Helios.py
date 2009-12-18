@@ -45,11 +45,30 @@ Copyright (c) 2003 Richard P. Muller (rmuller@sandia.gov). All rights
 reserved. 
 """
 
-from numpy import zeros,Float,sqrt,matrixmultiply,transpose
-from numpy.oldnumeric.linear_algebra import Heigenvectors,Heigenvalues
 import sys,getopt
 
+from numpy import zeros,sqrt,dot
+    
+def simx(A,B,T=False):
+    "Similarity transformation: returns (B+)AB"
+    if T: return dot(B,dot(A,B.T))
+    return dot(B.T,dot(A,B))
 
+def geigvalsh(H,S):
+    "Solve the generalized eigenvalue problem Hc=ScE"
+    from numpy.linalg import eigvalsh,cholesky,inv
+    X = inv(cholesky(S)).T
+    H = simx(H,X)
+    return eigvalsh(H)
+    
+def geigh(H,S):
+    "Solve the generalized eigenvalue problem Hc=ScE"
+    from numpy.linalg import eigh,cholesky,inv
+    X = inv(cholesky(S)).T
+    H = simx(H,X)
+    E,V = eigh(H)
+    return E,dot(X,V)
+    
 def kval(l,m,n,spin):
     """
        This is from Pekeris, except that the last term of the singlet
@@ -64,12 +83,7 @@ def kval(l,m,n,spin):
         # the different sign from the previous expression.
         #k = w*(w+2)*(2*w-1)/24. + (1-pow(-1,w))/16. + l*(m+n) + m
         k = w*(w+2)*(2*w-1)/24. - (1-pow(-1,w))/16. + l*(m+n) + m
-    else:
-        print "kval: Error -- unknown spin"
-        sys.exit()
-    # k should now be an integer
-    k = int(k)
-    return k
+    return int(k)
 
 def korder(wmax,spin):
     """
@@ -93,9 +107,6 @@ def korder(wmax,spin):
                     l = w-n-m
                     if 0<=l<m:
                         klist.append((l,m,n))
-    else:
-        print "korder: ERROR improper spin state"
-        sys.exit()
     return klist
 
 def hterm(l,m,n,l2,m2,n2):
@@ -284,8 +295,8 @@ def pekeris(Z,wmax,spin):
     """
     klist = korder(wmax,spin)
     N = len(klist)
-    H = zeros((N,N),Float)
-    S = zeros((N,N),Float)
+    H = zeros((N,N),'d')
+    S = zeros((N,N),'d')
     for index1 in range(N):
         l,m,n = klist[index1]
         k = kval(l,m,n,spin)
@@ -319,40 +330,23 @@ def pekeris(Z,wmax,spin):
                 
     return (H,S)
 
-def transform(A,B):
-    "Similarity transformation: returns (B+)AB"
-    C = matrixmultiply(A,B)
-    return matrixmultiply(transpose(B),C)
-
-def inv_sqrt(M):
-    "Returns the inverse square root of a matrix"
-    E,V = Heigenvectors(M)
-    n = len(E)
-    M = zeros((n,n),Float)
-    for i in range(n):
-        M[i,i] = 1./sqrt(E[i])
-    return transform(M,V)
-
 def two_electron_solve(**kwargs):
     "Solve the Peckeris Hamiltonian for a 2 electron system"
 
     # keyword arguments
     Z = kwargs.get("Z",2)        # Atomic number (1=H-, 2=He, etc.)
-    wmax = kwargs.get("wmax",5)  # Maximum order of matrix
+    wmax = kwargs.get("wmax",12) # Maximum order of matrix
     spin = kwargs.get("spin",0)  # Spin (0=Singlet, 1=Triplet)
+
+    assert spin in [0,1], "Improper spin state"
     
     H,S = pekeris(Z,wmax,spin)   # get the Ham and Olap matrices
-    N = H.shape[0]
 
-    # The next three lines solve the generalized eigenproblem
-    X = inv_sqrt(S)
-    H = transform(H,X)
-    E = Heigenvalues(H)
+    E = geigvalsh(H,S)
 
     # Convert to proper energies:
-    for i in range(N): 
-        E[i] = -E[i]*E[i]
-    print "Energy (h) for order %d: %15.12f" % (N,E[0])
+    E = -E**2
+    print "Energy (h) for order %d: %s" % (H.shape[0],E[0])
     return E[0]
 
 # Main program starts here:

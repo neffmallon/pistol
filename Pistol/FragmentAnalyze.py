@@ -24,7 +24,7 @@ reserved. See the LICENSE file for licensing details.
 """
 
 import sys
-from numpy import zeros,Float
+from numpy import zeros
 from math import sqrt
 
 #Data defined here is global
@@ -71,7 +71,7 @@ def get_dist0(bondtol):
                   1.3931/2, 1.2298/2, 1.1693/2]
     nel = len(rcovalent)
 
-    dist0 = zeros((nel,nel),Float)
+    dist0 = zeros((nel,nel),'d')
     for i in range(nel):
         for j in range(nel):
             if rcovalent[i] and rcovalent[j]:
@@ -312,3 +312,4 @@ if __name__ == '__main__':
 #  3450637  133.840  487.970  analyze_pops.py:160(is_bonded)
 # 10351911  130.320  130.320  analyze_pops.py:169(adjust_limits
 #      600   64.410  552.380  analyze_pops.py:143(calc_frags_dis
+

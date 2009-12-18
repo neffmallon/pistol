@@ -1094,6 +1094,7 @@ def getgeo(file):
         sym = words[0]
         x,y,z = map(float,words[1:4])
         sym = cleansym(sym)
+        if sym == 'Xpi': continue
         geo.append((sym2no[sym],(x,y,z)))
     return geo
 
